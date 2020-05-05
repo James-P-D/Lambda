@@ -1,2 +1,4 @@
 # Lambda
-A simple Lambda expression interpreter in Python 3
+A simple Lambda expression interpreter in Java
+
+λ
