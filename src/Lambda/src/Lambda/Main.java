@@ -12,6 +12,11 @@ public class Main {
         Console.println("u03BB = \u03BB");
         Console.println("u1D27 = \u1D27");
         
+        System.out.print("\u001B[0;33m");
+        System.out.println("YELLOW");
+        System.out.print("\033[0m");
+
+        
         String[] tokens = Tokeniser.Tokenise("true = λx.λy.x");
         for(int i=0; i<tokens.length; i++){
             //System.out.println(tokens[i]);
