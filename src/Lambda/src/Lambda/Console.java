@@ -26,20 +26,30 @@ public class Console {
         }
     }
 
+    public static void print(String message) {
+        print_(message, false);
+    }
+    
     public static void println(String message) {
+        print_(message, true);
+    }
+    
+    private static void print_(String message, Boolean newLine) {
         boolean successful = false;
         if (INSTANCE != null) {
             Pointer handle = INSTANCE.GetStdHandle(-11);
             char[] buffer = message.toCharArray();
             IntByReference lpNumberOfCharsWritten = new IntByReference();
-            successful = INSTANCE.WriteConsoleW(handle, buffer, buffer.length,
-                    lpNumberOfCharsWritten, null);
-            if(successful){
+            successful = INSTANCE.WriteConsoleW(handle, buffer, buffer.length, lpNumberOfCharsWritten, null);
+            if(newLine && successful){
                 System.out.println();
             }
         }
         if (!successful) {
-            System.out.println(message);
+            System.out.print(message);
+            if (newLine) {
+                System.out.println();
+            }
         }
     }
 }
