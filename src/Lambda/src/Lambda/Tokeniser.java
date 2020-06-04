@@ -1,3 +1,5 @@
+package Lambda;
+
 import java.util.ArrayList;
 
 public class Tokeniser {
@@ -21,7 +23,11 @@ public class Tokeniser {
                     token = "";
                 }
                 
-                tokens.add(Character.toString(ch));                
+                if (ch != SPACE) {
+                    tokens.add(Character.toString(ch));
+                }
+            } else {
+                token += ch;
             }
             
         }
