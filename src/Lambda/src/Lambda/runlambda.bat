@@ -1,4 +1,6 @@
+@echo off
 del *.class
+
 rem ORIGINAL FROM ECLIPSE:
 rem "C:\Program Files\Java\jre1.8.0_251\bin\javaw.exe" -agentlib:jdwp=transport=dt_socket,suspend=y,address=localhost:21341 -Dfile.encoding=UTF-8 -classpath "C:\Users\jdorr\Desktop\Dev\Lambda\src\Lambda\bin;C:\Users\jdorr\Desktop\Dev\Lambda\src\Lambda\libs\jna-platform-5.5.0.jar;C:\Users\jdorr\Desktop\Dev\Lambda\src\Lambda\libs\jna-5.5.0.jar" Lambda.Main
 
