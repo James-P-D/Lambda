@@ -1,0 +1,30 @@
+zero  = λf.λa.a
+one   = λf.λa.f a
+two   = λf.λa.f (f a)
+three = λf.λa.f (f (f a))
+four  = λf.λa.f (f (f (f a)))
+five  = λf.λa.f (f (f (f (f a))))
+six   = λf.λa.f (f (f (f (f (f a)))))
+seven = λf.λa.f (f (f (f (f (f (f a))))))
+eight = λf.λa.f (f (f (f (f (f (f (f a)))))))
+nine  = λf.λa.f (f (f (f (f (f (f (f (f a))))))))
+ten   = λf.λa.f (f (f (f (f (f (f (f (f (f a)))))))))
+
+
+true = λx.λy.x
+false = λx.λy.y
+
+and = λa.λb.a b a
+or = λa.λb.a a b
+not = λa.a false true
+
+pair = λa.λb.λf.f a b
+first = λp.p true
+second = λp.p false
+
+suc = λn.λf.λa.f (n f a)
+add = λm.λn.λf.λa.m f (n f a)
+mult = λm.λn.λf.m (n f)
+pow = λm.λn.n m
+pred = λn.λf.λa.n (λg.λh.h (g f)) (λu.a) (λu.u)
+sub = λm.λn.n pred m
