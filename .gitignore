@@ -1,0 +1,4 @@
+/src/.metadata
+/src/Lambda/.settings
+/src/Lambda/bin/Lambda/*.class
+*.class
