@@ -215,22 +215,35 @@ public class Console {
             try {            
                 int val = RawConsoleInput.read(false);
                 while(val != 13) {
-                    if(val > 0) {
+                    if (val > 0) {
+                        char ch = (char)val;
+                        retVal += ch;
                         if (val == 27) {
-                            return "";
+                            return "quit";
+                        } else if ((ch ==  Constants.LAMBDA_SUBSTITUTE) || (ch ==  Constants.LAMBDA)) {
+                            print(Character.toString(Constants.LAMBDA), Console.Color.YELLOW_BOLD);
+                        } else if ((ch ==  Constants.PERIOD) ||
+                                   (ch ==  Constants.EQUALS) ||
+                                   (ch ==  Constants.OPEN_PARENTHESES) ||
+                                   (ch ==  Constants.CLOSE_PARENTHESES)) {
+                            print(Character.toString(ch), Console.Color.GREEN);
+                        } else {
+                            print(Character.toString(ch), Console.Color.WHITE_BOLD);
                         }
-                        retVal += (char)val;                        
                     }
                     val = RawConsoleInput.read(false);
                 }
+                println();
             } catch (IOException e) {
-                // TODO Auto-generated catch block
-                return "ERROR";
+                return "ERROR reading from stdin!";
             }
+            
             return retVal;
         } else {
             Scanner scanner = new Scanner(System. in);
-            return scanner. nextLine();
+            String input =  scanner. nextLine();
+            scanner.close();
+            return input;
         }
     }       
 }

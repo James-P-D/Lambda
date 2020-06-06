@@ -10,19 +10,22 @@ import java.io.InputStreamReader;
 public class Main {
     
     public static void main(String[] args) {
-        System.out.println("Enter something!");
-        String input = Console.readInput();
-        System.out.println("You hit: "+input);
+                
+        parseArguments(args);
+
         
+        Console.print(Constants.LAMBDA + "> ", Console.Color.BLACK_BOLD);
+        String input = Console.readInput();
+        while (!input.equals("quit")) {
+            Console.print(Constants.LAMBDA + "> ", Console.Color.BLACK_BOLD);
+            input = Console.readInput();            
+        }
         
         /*
-        parseArguments(args);
-        
         Console.println(Constants.ALPHA + "> ", Console.Color.BLACK_BOLD);
         Console.println(Constants.BETA + "> ", Console.Color.BLACK_BOLD);
         Console.println(Constants.ETA + "> ", Console.Color.BLACK_BOLD);
-        Console.println(Constants.LAMBDA + "> ", Console.Color.BLACK_BOLD);
-       */
+         */
     }
 
     public static boolean isSame(String s, char c) {
@@ -45,7 +48,7 @@ public class Main {
                        (isSame(token, Constants.PERIOD))) {
                 Console.print(token, Console.Color.GREEN);                        
             } else {
-                Console.print(token + "", Console.Color.WHITE_BOLD);              
+                Console.print(token, Console.Color.WHITE_BOLD);              
             }
         }
         Console.println("");
