@@ -1,6 +1,7 @@
 package Lambda;
 
 import java.io.IOException;
+import java.util.Scanner;
 
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
@@ -207,133 +208,29 @@ public class Console {
         return sanitisedMessage;
     }
     
-    public static String readInput() {
-        String retVal = "";
-        try {            
-            int val = readWindows(false);
-            while(val != 13) {
-                if(val > 0) {
-                    if (val == 27) {
-                        return "";
+    public static String readInput() {        
+        if (INSTANCE != null) {
+            String retVal = "";
+        
+            try {            
+                int val = RawConsoleInput.read(false);
+                while(val != 13) {
+                    if(val > 0) {
+                        if (val == 27) {
+                            return "";
+                        }
+                        retVal += (char)val;                        
                     }
-                    retVal += (char)val;                        
+                    val = RawConsoleInput.read(false);
                 }
-                val = readWindows(false);
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                return "ERROR";
             }
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            return "ERROR";
+            return retVal;
+        } else {
+            Scanner scanner = new Scanner(System. in);
+            return scanner. nextLine();
         }
-        
-        return retVal;
-    }
-    
-
-    
-    
-    
-    
-    
-    private static Msvcrt        msvcrt;
-    private static Kernel32      kernel32;
-    private static Pointer       consoleHandle;
-    private static int           originalConsoleMode;
-    private static boolean                 initDone;
-    private static boolean                 stdinIsConsole;
-    private static boolean                 consoleModeAltered;
-    private static final boolean           isWindows     = System.getProperty("os.name").startsWith("Windows");
-    private static final int               invalidKey    = 0xFFFE;
-    private static final String            invalidKeyStr = String.valueOf((char)invalidKey);
-    
-    static final int  STD_INPUT_HANDLE       = -10;
-    static final long INVALID_HANDLE_VALUE   = -1;
-    static final int  ENABLE_PROCESSED_INPUT = 0x0001;
-    static final int  ENABLE_LINE_INPUT      = 0x0002;
-    static final int  ENABLE_ECHO_INPUT      = 0x0004;
-    static final int  ENABLE_WINDOW_INPUT    = 0x0008; 
-    
-    private static int readWindows (boolean wait) throws IOException {
-        initWindows();
-        if (!stdinIsConsole) {
-           int c = msvcrt.getwchar();
-           if (c == 0xFFFF) {
-              c = -1; }
-           return c; }
-        consoleModeAltered = true;
-        setConsoleMode(consoleHandle, originalConsoleMode & ~ENABLE_PROCESSED_INPUT);
-           // ENABLE_PROCESSED_INPUT must remain off to prevent Ctrl-C from beeing processed by the system
-           // while the program is not within getwch().
-        if (!wait && msvcrt._kbhit() == 0) {
-           return -2; }                                         // no key available
-        return getwch(); }
-
-     private static int getwch() {
-        int c = msvcrt._getwch();
-        if (c == 0 || c == 0xE0) {                              // Function key or arrow key
-           c = msvcrt._getwch();
-           if (c >= 0 && c <= 0x18FF) {
-              return 0xE000 + c; }                              // construct key code in private Unicode range
-           return invalidKey; }
-        if (c < 0 || c > 0xFFFF) {
-           return invalidKey; }
-        return c; }                                             // normal key
-
-     private static synchronized void initWindows() throws IOException {
-        if (initDone) {
-           return; }
-        msvcrt = (Msvcrt)Native.loadLibrary("msvcrt", Msvcrt.class);
-        kernel32 = (Kernel32)Native.loadLibrary("kernel32", Kernel32.class);
-        try {
-           consoleHandle = getStdInputHandle();
-           originalConsoleMode = getConsoleMode(consoleHandle);
-           stdinIsConsole = true; }
-         catch (IOException e) {
-           stdinIsConsole = false; }
-        if (stdinIsConsole) {
-           registerShutdownHook(); }
-        initDone = true; }
-
-     private static void registerShutdownHook() {
-         Runtime.getRuntime().addShutdownHook( new Thread() {
-            public void run() {
-               shutdownHook(); }}); }
-
-     public static void resetConsoleMode() throws IOException {
-         if (isWindows) {
-            resetConsoleModeWindows(); }
-     }
-     
-      private static void shutdownHook() {
-         try {
-            resetConsoleMode(); }
-          catch (Exception e) {}}
-     
-     private static Pointer getStdInputHandle() throws IOException {
-        Pointer handle = kernel32.GetStdHandle(STD_INPUT_HANDLE);
-        if (Pointer.nativeValue(handle) == 0 || Pointer.nativeValue(handle) == INVALID_HANDLE_VALUE) {
-           throw new IOException("GetStdHandle(STD_INPUT_HANDLE) failed."); }
-        return handle; }
-
-     private static int getConsoleMode (Pointer handle) {
-        IntByReference mode = new IntByReference();
-        
-        Function GetConsoleModeFunc = Function.getFunction("kernel32", "GetConsoleMode");
-        GetConsoleModeFunc.invoke(BOOL.class, new Object[]{handle, mode});
-        return mode.getValue();
-     }
-
-     private static void setConsoleMode (Pointer handle, int mode)  {
-         Function SetConsoleModeFunc = Function.getFunction("kernel32", "SetConsoleMode");
-        
-         SetConsoleModeFunc.invoke(BOOL.class, new Object[]{handle, mode});
-         }
-
-     private static void resetConsoleModeWindows() throws IOException {
-        if (!initDone || !stdinIsConsole || !consoleModeAltered) {
-           return; }
-        setConsoleMode(consoleHandle, originalConsoleMode);
-        consoleModeAltered = false; }
-
-
-    
+    }       
 }
