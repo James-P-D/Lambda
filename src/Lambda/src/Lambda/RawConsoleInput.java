@@ -142,8 +142,8 @@ public class RawConsoleInput {
         if (initDone) {
             return;
         }
-        msvcrt = (Msvcrt)Native.loadLibrary("msvcrt", Msvcrt.class);
-        kernel32 = (Kernel32)Native.loadLibrary("kernel32", Kernel32.class);
+        msvcrt = (Msvcrt)Native.load("msvcrt", Msvcrt.class);
+        kernel32 = (Kernel32)Native.load("kernel32", Kernel32.class);
         try {
             consoleHandle = getStdInputHandle();
             originalConsoleMode = getConsoleMode(consoleHandle);
@@ -200,9 +200,9 @@ public class RawConsoleInput {
         //static final long INVALID_HANDLE_VALUE   = (Pointer.SIZE == 8) ? -1 : 0xFFFFFFFFL;
         static final long INVALID_HANDLE_VALUE   = -1;
         static final int  ENABLE_PROCESSED_INPUT = 0x0001;
-        static final int  ENABLE_LINE_INPUT      = 0x0002;
-        static final int  ENABLE_ECHO_INPUT      = 0x0004;
-        static final int  ENABLE_WINDOW_INPUT    = 0x0008;
+        //static final int  ENABLE_LINE_INPUT      = 0x0002;
+        //static final int  ENABLE_ECHO_INPUT      = 0x0004;
+        //static final int  ENABLE_WINDOW_INPUT    = 0x0008;
     }
     
     private static interface Kernel32 extends Library {
@@ -303,7 +303,7 @@ public class RawConsoleInput {
         if (initDone) {
             return;
         }
-        libc = (Libc)Native.loadLibrary("c", Libc.class);
+        libc = (Libc)Native.load("c", Libc.class);
         stdinIsConsole = libc.isatty(stdinFd) == 1;
         charsetDecoder = Charset.defaultCharset().newDecoder();
         if (stdinIsConsole) {

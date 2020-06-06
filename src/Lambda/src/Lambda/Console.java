@@ -15,11 +15,6 @@ import com.sun.jna.platform.win32.WinNT.HANDLE;
 // (Especially the outputting of Unicode!)
 
 public class Console {
-    private static interface Msvcrt extends Library {
-        int _kbhit();
-        int _getwch();
-        int getwchar(); }
-    
     enum Color {
         //Color end string, color reset
         RESET                       ("\033[0m"),    // Reset to default
