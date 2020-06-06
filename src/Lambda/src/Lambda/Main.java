@@ -67,7 +67,6 @@ public class Main {
             String filename = args[i];
             
             displayInfo("LOADING", filename);
-            Console.println();      
             try {
                 File file = new File(filename);
                 BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF8"));
