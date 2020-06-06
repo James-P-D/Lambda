@@ -211,7 +211,8 @@ public class Console {
                 // While not <ENTER>
                 while(val != 13) {
                     // If we read a valid character...
-                    if (val > 0) {
+                    if (val > 0 && val <= 122) {
+                        //System.out.print(" "+val+" ");
                         // If <ESC> pressed..
                         if (val == 27) {
                             return "quit";
