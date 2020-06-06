@@ -97,7 +97,6 @@ public class Console {
             return code;
         }
     }
-
     
     private static Kernel32 INSTANCE = null;
 
@@ -158,26 +157,44 @@ public class Console {
     }
     
     private static void print_(String message, Boolean newLine, Color fontColor, Color backColor) {
-        System.out.print(fontColor);
-        System.out.print(backColor);
-        
         boolean successful = false;
         if (INSTANCE != null) {
+            System.out.print(fontColor);
+            System.out.print(backColor);
+            
             Pointer handle = INSTANCE.GetStdHandle(-11);
             char[] buffer = message.toCharArray();
             IntByReference lpNumberOfCharsWritten = new IntByReference();
             successful = INSTANCE.WriteConsoleW(handle, buffer, buffer.length, lpNumberOfCharsWritten, null);
             if(newLine && successful){
-                System.out.print(Color.RESET);                
                 System.out.println();
             }
+            System.out.print(Color.RESET);                
         }
         if (!successful) {
-            System.out.print(message);
-            System.out.print(Color.RESET);                
+            message = sanitise(message);
+            System.out.print(message);                
             if (newLine) {
                 System.out.println();
             }
         }
     }
+    
+    private static String sanitise(String message) {
+        String sanitisedMessage = "";
+        for (char ch: message.toCharArray()) {
+            if (ch == Constants.ALPHA) {
+                sanitisedMessage += Constants.ALPHA_SUBSTITUTE;
+            } else if (ch == Constants.BETA) {
+                sanitisedMessage += Constants.BETA_SUBSTITUTE;
+            } else if (ch == Constants.ETA) {
+                sanitisedMessage += Constants.ETA_SUBSTITUTE;
+            } else if (ch == Constants.LAMBDA) {
+                sanitisedMessage += Constants.LAMBDA_SUBSTITUTE;
+            } else {
+                sanitisedMessage += ch;
+            }
+        }
+        return sanitisedMessage;
+   }
 }
