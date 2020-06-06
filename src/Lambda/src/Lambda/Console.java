@@ -1,7 +1,8 @@
 package Lambda;
 
+import java.io.BufferedReader;
 import java.io.IOException;
-import java.util.Scanner;
+import java.io.InputStreamReader;
 
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
@@ -244,14 +245,20 @@ public class Console {
                 }
                 println();
             } catch (IOException e) {
-                return "ERROR reading from stdin!";
+                System.out.println("ERROR reading from stdin: " + e.getMessage());
+                return "quit";
             }
             
             return retVal;
         } else {
-            Scanner scanner = new Scanner(System. in);
-            String input =  scanner. nextLine();
-            scanner.close();
+            BufferedReader br = new BufferedReader(new InputStreamReader(System.in));            
+            String input = "";
+            try {
+                input = br.readLine();
+            } catch (IOException e) {
+                System.out.println("ERROR reading from stdin: " + e.getMessage());
+                return "quit";
+            }
             return input;
         }
     }       
