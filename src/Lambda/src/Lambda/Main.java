@@ -10,12 +10,19 @@ import java.io.InputStreamReader;
 public class Main {
     
     public static void main(String[] args) {
+        System.out.println("Enter something!");
+        String input = Console.readInput();
+        System.out.println("You hit: "+input);
+        
+        
+        /*
         parseArguments(args);
         
         Console.println(Constants.ALPHA + "> ", Console.Color.BLACK_BOLD);
         Console.println(Constants.BETA + "> ", Console.Color.BLACK_BOLD);
         Console.println(Constants.ETA + "> ", Console.Color.BLACK_BOLD);
         Console.println(Constants.LAMBDA + "> ", Console.Color.BLACK_BOLD);
+       */
     }
 
     public static boolean isSame(String s, char c) {
