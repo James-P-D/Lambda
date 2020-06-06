@@ -9,14 +9,12 @@ import java.io.InputStreamReader;
 
 public class Main {
     
-    public static void main(String[] args) {
-                
+    public static void main(String[] args) {                
         parseArguments(args);
-
         
         Console.print(Constants.LAMBDA + "> ", Console.Color.BLACK_BOLD);
         String input = Console.readInput();
-        while (!input.equals("quit")) {
+        while ((!input.equals("quit")) && (!input.equals("quit"))) {
             Console.print(Constants.LAMBDA + "> ", Console.Color.BLACK_BOLD);
             input = Console.readInput();            
         }
