@@ -202,64 +202,54 @@ public class Console {
         return sanitisedMessage;
     }
     
-    public static String readInput() {        
+    public static String readInput() throws IOException {        
         if (INSTANCE != null) {
             String retVal = "";
             
-            try {            
-                int val = RawConsoleInput.read(false);
-                // While not <ENTER>
-                while(val != 13) {
-                    // If we read a valid character...
-                    if (val > 0 && val <= 122) {
-                        //System.out.print(" "+val+" ");
-                        // If <ESC> pressed..
-                        if (val == 27) {
-                            return "quit";
-                        } else if (val == 8) { // If <BACKSPACE> pressed
-                            if (retVal.length() > 0) {
-                                print(Character.toString((char)val));
-                                print(Character.toString(' '));
-                                print(Character.toString((char)val));
-                                retVal = retVal.substring(0, retVal.length() - 1);
-                            }
+            int val = RawConsoleInput.read(false);
+            // While not <ENTER>
+            while(val != 13) {
+                // If we read a valid character...
+                if (val > 0 && val <= 122) {
+                    //System.out.print(" "+val+" ");
+                    // If <ESC> pressed..
+                    if (val == 27) {
+                        return Constants.QUIT_COMMAND;
+                    } else if (val == 8) { // If <BACKSPACE> pressed
+                        if (retVal.length() > 0) {
+                            print(Character.toString((char)val));
+                            print(Character.toString(' '));
+                            print(Character.toString((char)val));
+                            retVal = retVal.substring(0, retVal.length() - 1);
+                        }
+                    } else {
+                        char ch = (char)val;
+                        retVal += ch;
+                        // If user enters a forward-slash, substitute it for Greek lambda character
+                        if ((ch ==  Constants.LAMBDA_SUBSTITUTE) || (ch ==  Constants.LAMBDA)) {
+                            // Display lambda in yellow
+                            print(Character.toString(Constants.LAMBDA), Console.Color.YELLOW_BOLD);
+                        } else if ((ch ==  Constants.PERIOD) ||
+                                   (ch ==  Constants.EQUALS) ||
+                                   (ch ==  Constants.OPEN_PARENTHESES) ||
+                                   (ch ==  Constants.CLOSE_PARENTHESES)) {
+                            // Display all other symbols in green
+                            print(Character.toString(ch), Console.Color.GREEN);
                         } else {
-                            char ch = (char)val;
-                            retVal += ch;
-                            // If user enters a forward-slash, substitute it for Greek lambda character
-                            if ((ch ==  Constants.LAMBDA_SUBSTITUTE) || (ch ==  Constants.LAMBDA)) {
-                                // Display lambda in yellow
-                                print(Character.toString(Constants.LAMBDA), Console.Color.YELLOW_BOLD);
-                            } else if ((ch ==  Constants.PERIOD) ||
-                                       (ch ==  Constants.EQUALS) ||
-                                       (ch ==  Constants.OPEN_PARENTHESES) ||
-                                       (ch ==  Constants.CLOSE_PARENTHESES)) {
-                                // Display all other symbols in green
-                                print(Character.toString(ch), Console.Color.GREEN);
-                            } else {
-                                // Display all variables, terms, etc. in white
-                                print(Character.toString(ch), Console.Color.WHITE_BOLD);
-                            }
+                            // Display all variables, terms, etc. in white
+                            print(Character.toString(ch), Console.Color.WHITE_BOLD);
                         }
                     }
-                    val = RawConsoleInput.read(false);
                 }
-                println();
-            } catch (IOException e) {
-                System.out.println("ERROR reading from stdin: " + e.getMessage());
-                return "quit";
+                val = RawConsoleInput.read(false);
             }
+            println();
             
             return retVal;
         } else {
             BufferedReader br = new BufferedReader(new InputStreamReader(System.in));            
             String input = "";
-            try {
-                input = br.readLine();
-            } catch (IOException e) {
-                System.out.println("ERROR reading from stdin: " + e.getMessage());
-                return "quit";
-            }
+            input = br.readLine();
             return input;
         }
     }       
