@@ -8,10 +8,8 @@ import com.sun.jna.Pointer;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.win32.StdCallLibrary;
 import com.sun.jna.*;
-import com.sun.jna.platform.win32.WinDef;
 import com.sun.jna.platform.win32.WinDef.*;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
-import com.sun.jna.Pointer;
 
 // Much of this code is butched from @author Sandy_Yin - https://stackoverflow.com/users/1157731/yin-shan
 // (Especially the outputting of Unicode!)
@@ -24,7 +22,7 @@ public class Console {
     
     enum Color {
         //Color end string, color reset
-        RESET("\033[0m"),
+        RESET                       ("\033[0m"),    // Reset to default
 
         // Regular Colors. Normal color, no bold, background color etc.
         BLACK                       ("\033[0;30m"), // BLACK
