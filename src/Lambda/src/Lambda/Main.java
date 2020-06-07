@@ -16,7 +16,7 @@ public class Main {
         
         String input = "";
         boolean debugMode = false;
-        
+
         do {
             Console.print(Constants.LAMBDA + Constants.PROMPT, Console.Color.BLACK_BOLD);        
             try {
@@ -51,6 +51,8 @@ public class Main {
             } else if (input.equals(Constants.DEBUG_COMMAND)) {
                 debugMode = !debugMode;
                 displayInfo(Constants.DEBUG_MODE, debugMode ? Constants.ON : Constants.OFF);
+            } else if (input.equals(Constants.TERMS_COMMAND)) {
+                displayAllTerms();
             } else if (input.equals(Constants.HELP_COMMAND)) {
                 displayInfo(Constants.HELP, Constants.HELP_INFO_1); 
                 displayInfo(Constants.HELP, Constants.HELP_INFO_2); 
@@ -63,6 +65,10 @@ public class Main {
         } while ((!input.equals(Constants.QUIT_COMMAND)) && (!input.equals(Constants.EXIT_COMMAND)));
     }
 
+    private static void displayAllTerms(){
+        displayInfo(Constants.TERMS, Integer.toString(0) + Constants.TERMS_MESSAGE);
+    }
+    
     public static boolean stringIsSingleChar(String str, char ch) {
         if ((str != null) && (str.length() == 1)) { 
             return str.charAt(0) == ch;
@@ -89,10 +95,15 @@ public class Main {
         Console.println();
     }
     
-    private static void displayError(String message, Exception e) {
-        displayError(message + "\n" + e.getMessage());
+    private static void displayWarning(String message) {
+        Console.print(Constants.WARNING + ": ", Console.Color.YELLOW);
+        Console.println(message, Console.Color.YELLOW_BRIGHT);                
     }
-    
+
+    private static void displayError(String message, Exception e) {
+        displayError(message + e.getMessage());                
+    }
+
     private static void displayError(String message){
         Console.print(Constants.ERROR + ": ", Console.Color.RED);
         Console.println(message, Console.Color.RED_BRIGHT);                
