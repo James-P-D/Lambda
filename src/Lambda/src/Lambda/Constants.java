@@ -8,6 +8,10 @@ public class Constants {
     public static final char OPEN_PARENTHESES   = '(';
     public static final char CLOSE_PARENTHESES  = ')';
 
+    public static final Console.Color LAMBDA_COLOR     = Console.Color.YELLOW_BOLD;
+    public static final Console.Color OPERATOR_COLOR   = Console.Color.GREEN;
+    public static final Console.Color IDENTIFIER_COLOR = Console.Color.WHITE_BOLD;
+    
     // Greek letters (and substitutes if we can't display)  // Upper  Lower   
     public static final char ALPHA              = '\u03B1'; // \u0391 \u03B1
     public static final char ALPHA_SUBSTITUTE   = 'A';
@@ -31,6 +35,7 @@ public class Constants {
     public static final String DEBUG_MODE                           = "DEBUG MODE";
     public static final String QUITTING                             = "QUITTING";
     public static final String QUIT_MESSAGE                         = "Bye!";
+    public static final String DEBUG                                = "DEBUG";
     public static final String WARNING                              = "WARNING";
     public static final String ERROR                                = "ERROR";
     public static final String LOADING_FILE                         = "LOADING FILE";

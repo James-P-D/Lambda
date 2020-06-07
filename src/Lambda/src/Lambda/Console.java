@@ -211,9 +211,9 @@ public class Console {
             while(val != 13) {
                 // If we read a valid character...
                 if (val > 0 && val <= 122) {
-                    //System.out.print(" "+val+" ");
                     // If <ESC> pressed..
                     if (val == 27) {
+                        print("\n");
                         return Constants.QUIT_COMMAND;
                     } else if (val == 8) { // If <BACKSPACE> pressed
                         if (retVal.length() > 0) {
@@ -226,18 +226,18 @@ public class Console {
                         char ch = (char)val;
                         retVal += ch;
                         // If user enters a forward-slash, substitute it for Greek lambda character
-                        if ((ch ==  Constants.LAMBDA_SUBSTITUTE) || (ch ==  Constants.LAMBDA)) {
+                        if ((ch ==  Constants.LAMBDA_SUBSTITUTE) || (ch == Constants.LAMBDA)) {
                             // Display lambda in yellow
-                            print(Character.toString(Constants.LAMBDA), Console.Color.YELLOW_BOLD);
+                            print(Character.toString(Constants.LAMBDA), Constants.LAMBDA_COLOR);
                         } else if ((ch ==  Constants.PERIOD) ||
                                    (ch ==  Constants.EQUALS) ||
                                    (ch ==  Constants.OPEN_PARENTHESES) ||
                                    (ch ==  Constants.CLOSE_PARENTHESES)) {
                             // Display all other symbols in green
-                            print(Character.toString(ch), Console.Color.GREEN);
+                            print(Character.toString(ch), Constants.OPERATOR_COLOR);
                         } else {
                             // Display all variables, terms, etc. in white
-                            print(Character.toString(ch), Console.Color.WHITE_BOLD);
+                            print(Character.toString(ch), Constants.IDENTIFIER_COLOR);
                         }
                     }
                 }

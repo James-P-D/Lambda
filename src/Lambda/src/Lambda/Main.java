@@ -60,7 +60,6 @@ public class Main {
                 displayInfo(Constants.HELP, Constants.HELP_INFO_4); 
                 displayInfo(Constants.HELP, Constants.HELP_INFO_5); 
             } else if ((input.equals(Constants.QUIT_COMMAND)) || (input.equals(Constants.EXIT_COMMAND))) {
-                Console.println();
                 displayInfo(Constants.QUITTING, Constants.QUIT_MESSAGE);
             }
         } while ((!input.equals(Constants.QUIT_COMMAND)) && (!input.equals(Constants.EXIT_COMMAND)));
@@ -96,6 +95,11 @@ public class Main {
         Console.println(message, Console.Color.BLUE_BRIGHT);
     }
     
+    private static void displayDebug(String message){
+        Console.print(Constants.DEBUG + ": ", Console.Color.MAGENTA);
+        Console.println(message, Console.Color.MAGENTA_BRIGHT);
+    }    
+
     private static void parseArguments(String[] args) {        
         for (int i = 0; i < args.length; i++){
             String filename = args[i];
@@ -110,7 +114,7 @@ public class Main {
                 {
                     line = line.trim();
                     if (!line.isEmpty()) {
-                        //parseAndOutput(line);
+                        parseAndOutput(line);
                         termsParsed++;
                     }
                 }
@@ -121,21 +125,21 @@ public class Main {
             }
         }
     }
-    
+
     private static void parseAndOutput(String input){
         Console.print(Constants.LAMBDA + Constants.PROMPT, Console.Color.BLACK_BOLD);
         String[] tokens = Tokeniser.Tokenise(input);
         for (int i = 0; i < tokens.length; i++) {
             String token = tokens[i];
             if (stringIsSingleChar(token, Constants.LAMBDA)) {
-                Console.print(token, Console.Color.YELLOW_BOLD);                
+                Console.print(token, Constants.LAMBDA_COLOR);                
             } else if ((stringIsSingleChar(token, Constants.OPEN_PARENTHESES)) ||
                        (stringIsSingleChar(token, Constants.CLOSE_PARENTHESES)) ||
                        (stringIsSingleChar(token, Constants.EQUALS)) ||
                        (stringIsSingleChar(token, Constants.PERIOD))) {
-                Console.print(token, Console.Color.GREEN);                        
+                Console.print(token, Constants.OPERATOR_COLOR);                        
             } else {
-                Console.print(token, Console.Color.WHITE_BOLD);              
+                Console.print(token, Constants.IDENTIFIER_COLOR);              
             }
         }
         Console.println();
