@@ -30,7 +30,7 @@ public class Main {
                 ArrayList<String> alphas = new ArrayList<String>();
                 int alphaCount = 1;
                 do {
-                    Console.print(Constants.ALPHA + Integer.toString(alphaCount), Constants.PROMPT_COLOR);
+                    Console.print(Constants.ALPHA + Integer.toString(alphaCount) + Constants.PROMPT, Constants.PROMPT_COLOR);
                     try {
                         input = Console.readInput().trim();
                     } catch (IOException e) {

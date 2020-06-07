@@ -10,7 +10,7 @@ public class Constants {
 
     public static final Console.Color PROMPT_COLOR                  = Console.Color.BLACK_BOLD; 
     public static final Console.Color LAMBDA_COLOR                  = Console.Color.YELLOW_BOLD;
-    public static final Console.Color OPERATOR_COLOR                = Console.Color.GREEN_BOLD;
+    public static final Console.Color OPERATOR_COLOR                = Console.Color.GREEN;
     public static final Console.Color IDENTIFIER_COLOR              = Console.Color.WHITE_BOLD;
     
     // Greek letters (and substitutes if we can't display)          // Upper  Lower   
@@ -46,12 +46,12 @@ public class Constants {
     public static final String TERMS_MESSAGE                        = " terms found";
     public static final String HELP_INFO_1                          = "blah blah blah";
     public static final String HELP_INFO_2                          = "Commands: help      - this screen";
-    public static final String HELP_INFO_3                          = "          terms     - ";
+    public static final String HELP_INFO_3                          = "          terms     - display all known terms";
     public static final String HELP_INFO_4                          = "          debug     - toggle debug mode";
-    public static final String HELP_INFO_5                          = "          alpha     - ";
+    public static final String HELP_INFO_5                          = "          alpha     - alpha-equivalence";
     public static final String HELP_INFO_6                          = "          exit/quit - leave the application";
     public static final String LAMBDA_CALCULUS                      = LAMBDA + "-CALCULUS";
-    public static final String LAMBDA_CALCULUS_INFO                 = "Type 'help' for more information'";
+    public static final String LAMBDA_CALCULUS_INFO                 = "Type 'help' for more information";
     
     public static final String ERROR_UNABLE_OPEN_FILE               = "Unable to read from file: ";
     public static final String ERROR_MUST_PROVIDE_ATLEAST_TWO_TERMS = "Must provide atleast 2 terms";
