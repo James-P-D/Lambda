@@ -18,7 +18,7 @@ public class Main {
         boolean debugMode = false;
 
         do {
-            Console.print(Constants.LAMBDA + Constants.PROMPT, Console.Color.BLACK_BOLD);        
+            Console.print(Constants.LAMBDA + Constants.PROMPT,  Constants.PROMPT_COLOR);        
             try {
                 input = Console.readInput();
             } catch (IOException e) {
@@ -30,7 +30,7 @@ public class Main {
                 ArrayList<String> alphas = new ArrayList<String>();
                 int alphaCount = 1;
                 do {
-                    Console.print(Constants.ALPHA + Integer.toString(alphaCount) + Constants.PROMPT, Console.Color.BLACK_BOLD);
+                    Console.print(Constants.ALPHA + Integer.toString(alphaCount), Constants.PROMPT_COLOR);
                     try {
                         input = Console.readInput().trim();
                     } catch (IOException e) {
@@ -45,7 +45,7 @@ public class Main {
                 if (alphas.size() < 2) {
                     displayError(Constants.ERROR_MUST_PROVIDE_ATLEAST_TWO_TERMS);
                 } else {
-                    Console.print(Constants.ALPHA + Constants.PROMPT, Console.Color.BLACK_BOLD);
+                    Console.print(Constants.ALPHA + Constants.PROMPT, Constants.PROMPT_COLOR);
                     Console.println();
                 }
             } else if (input.equals(Constants.DEBUG_COMMAND)) {
@@ -127,7 +127,7 @@ public class Main {
     }
 
     private static void parseAndOutput(String input){
-        Console.print(Constants.LAMBDA + Constants.PROMPT, Console.Color.BLACK_BOLD);
+        Console.print(Constants.LAMBDA + Constants.PROMPT, Constants.PROMPT_COLOR);
         String[] tokens = Tokeniser.Tokenise(input);
         for (int i = 0; i < tokens.length; i++) {
             String token = tokens[i];
