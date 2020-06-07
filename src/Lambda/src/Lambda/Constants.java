@@ -34,6 +34,7 @@ public class Constants {
     public static final String WARNING                              = "WARNING";
     public static final String ERROR                                = "ERROR";
     public static final String LOADING_FILE                         = "LOADING FILE";
+    public static final String TERMS_PARSED                         = " terms parsed";
     public static final String HELP                                 = "HELP";
     public static final String TERMS                                = "TERMS";
     public static final String TERMS_MESSAGE                        = " terms found";

@@ -76,25 +76,6 @@ public class Main {
         return false;
     }
     
-    private static void parseAndOutput(String input){
-        Console.print(Constants.LAMBDA + Constants.PROMPT, Console.Color.BLACK_BOLD);
-        String[] tokens = Tokeniser.Tokenise(input);
-        for (int i = 0; i < tokens.length; i++) {
-            String token = tokens[i];
-            if (stringIsSingleChar(token, Constants.LAMBDA)) {
-                Console.print(token, Console.Color.YELLOW_BOLD);                
-            } else if ((stringIsSingleChar(token, Constants.OPEN_PARENTHESES)) ||
-                       (stringIsSingleChar(token, Constants.CLOSE_PARENTHESES)) ||
-                       (stringIsSingleChar(token, Constants.EQUALS)) ||
-                       (stringIsSingleChar(token, Constants.PERIOD))) {
-                Console.print(token, Console.Color.GREEN);                        
-            } else {
-                Console.print(token, Console.Color.WHITE_BOLD);              
-            }
-        }
-        Console.println();
-    }
-    
     private static void displayWarning(String message) {
         Console.print(Constants.WARNING + ": ", Console.Color.YELLOW);
         Console.println(message, Console.Color.YELLOW_BRIGHT);                
@@ -117,23 +98,46 @@ public class Main {
     private static void parseArguments(String[] args) {        
         for (int i = 0; i < args.length; i++){
             String filename = args[i];
-            
+            int termsParsed = 0;
             displayInfo(Constants.LOADING_FILE, filename);
             try {
                 File file = new File(filename);
                 BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF8"));
                 String line;
+                
                 while((line = bufferedReader.readLine()) != null)
                 {
                     line = line.trim();
                     if (!line.isEmpty()) {
-                        parseAndOutput(line);
+                        //parseAndOutput(line);
+                        termsParsed++;
                     }
                 }
                 bufferedReader.close();
+                displayInfo(Constants.LOADING_FILE, Integer.toString(termsParsed)+Constants.TERMS_PARSED);
             } catch (IOException e) {
                 displayError(Constants.ERROR_UNABLE_OPEN_FILE + filename, e);
             }
         }
     }
+    
+    private static void parseAndOutput(String input){
+        Console.print(Constants.LAMBDA + Constants.PROMPT, Console.Color.BLACK_BOLD);
+        String[] tokens = Tokeniser.Tokenise(input);
+        for (int i = 0; i < tokens.length; i++) {
+            String token = tokens[i];
+            if (stringIsSingleChar(token, Constants.LAMBDA)) {
+                Console.print(token, Console.Color.YELLOW_BOLD);                
+            } else if ((stringIsSingleChar(token, Constants.OPEN_PARENTHESES)) ||
+                       (stringIsSingleChar(token, Constants.CLOSE_PARENTHESES)) ||
+                       (stringIsSingleChar(token, Constants.EQUALS)) ||
+                       (stringIsSingleChar(token, Constants.PERIOD))) {
+                Console.print(token, Console.Color.GREEN);                        
+            } else {
+                Console.print(token, Console.Color.WHITE_BOLD);              
+            }
+        }
+        Console.println();
+    }
+
 }
