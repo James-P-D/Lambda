@@ -7,6 +7,14 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 
+/*
+No shorthand
+
+\a.\b.b # This is fine
+\ab.b   # This is not, although in mathematics, its equivalent
+
+ */
+
 public class Main {
     
     public static void main(String[] args) {                
