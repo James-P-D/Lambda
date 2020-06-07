@@ -60,6 +60,7 @@ public class Main {
                 displayInfo(Constants.HELP, Constants.HELP_INFO_4); 
                 displayInfo(Constants.HELP, Constants.HELP_INFO_5); 
             } else if ((input.equals(Constants.QUIT_COMMAND)) || (input.equals(Constants.EXIT_COMMAND))) {
+                Console.println();
                 displayInfo(Constants.QUITTING, Constants.QUIT_MESSAGE);
             }
         } while ((!input.equals(Constants.QUIT_COMMAND)) && (!input.equals(Constants.EXIT_COMMAND)));
