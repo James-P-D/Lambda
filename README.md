@@ -6,9 +6,9 @@ A simple [Lambda Calculus](https://en.wikipedia.org/wiki/Lambda_calculus) expres
 ## Contents
 
 1. [Lambda Calculus](#Lambda-Calculus)
-    * [History](#History)
-    * [Beta Reduction](#Beta-Reduction)
-    * [Alpha Equivalence](#Alpha-Equivalence)
+    1. [History](#History)
+    2. [Beta Reduction](#Beta-Reduction)
+    3. [Alpha Equivalence](#Alpha-Equivalence)
 2. [The Application](#The-Application)
 
 ### Lambda Calculus
