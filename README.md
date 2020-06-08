@@ -19,11 +19,9 @@ A simple [Lambda Calculus](https://en.wikipedia.org/wiki/Lambda_calculus) expres
 3. [Building Notes and Problems](#Building-Notes-and-Problems)
 4. [Acknowledgements](#Acknowledgements)
     
-### Lambda Calculus
+## Lambda Calculus
 
 If you already understand the Lambda Calculus, you can skip this section and head straight to [The Application](#The-Application).  
-
-Definition
 
 ```
 <expression>  = <name> | <function> | <application>
@@ -37,7 +35,7 @@ Definition
 
 ### Alpha Equivalence
 
-### The Application
+## The Application
 
 ### Help
 
