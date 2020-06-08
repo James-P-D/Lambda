@@ -25,12 +25,12 @@ import java.util.Map;
 
 public class Main {
 
-    private static Map<String, String> terms;
+    private static Map<String, LambdaExpression> terms;
     
-    public static void main(String[] args) {                
+    public static void main(String[] args) {   
         parseArguments(args);
 
-        terms = new HashMap<String, String>();
+        terms = new HashMap<String, LambdaExpression>();
         
         displayInfo(Constants.LAMBDA_CALCULUS, Constants.LAMBDA_CALCULUS_INFO);
         
@@ -180,12 +180,10 @@ public class Main {
         String[] tokens = Tokeniser.Tokenise(input);
         for (int i = 0; i < tokens.length; i++) {
             String token = tokens[i];
-            parse(token);
+            if (token.length() == 1) {
+                
+            } else {
+            }
         }
-    }
-    
-    private static void parse(String[] token) {
-        
-    }
-    }
+    }   
 }
