@@ -8,10 +8,14 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 /*
-No shorthand
+ * No shorthand
+    \a.\b.b # This is fine
+    \ab.b   # This is not, although in mathematics, its equivalent
 
-\a.\b.b # This is fine
-\ab.b   # This is not, although in mathematics, its equivalent
+ * Check that when declaring new terms (either through console or through
+   script file) that it doesn't clash with a reserved word (e.g. 'help', 'quit')
+   
+ * Check case of input (for both terms and commands)
 
  */
 
@@ -28,7 +32,7 @@ public class Main {
         do {
             Console.print(Constants.LAMBDA + Constants.PROMPT,  Constants.PROMPT_COLOR);        
             try {
-                input = Console.readInput();
+                input = Console.readInput().toLowerCase();
             } catch (IOException e) {
                 displayError(Constants.ERROR_READING_FROM_STDIN, e);
                 continue;
@@ -67,8 +71,14 @@ public class Main {
                 displayInfo(Constants.HELP, Constants.HELP_INFO_3); 
                 displayInfo(Constants.HELP, Constants.HELP_INFO_4); 
                 displayInfo(Constants.HELP, Constants.HELP_INFO_5); 
+                displayInfo(Constants.HELP, Constants.HELP_INFO_6); 
+            } else if (input.startsWith(Constants.LOAD_COMMAND)) {
+                String filename = input.replace(Constants.LOAD_COMMAND, "").trim();
+                loadFile(filename);
             } else if ((input.equals(Constants.QUIT_COMMAND)) || (input.equals(Constants.EXIT_COMMAND))) {
                 displayInfo(Constants.QUITTING, Constants.QUIT_MESSAGE);
+            } else {
+                
             }
         } while ((!input.equals(Constants.QUIT_COMMAND)) && (!input.equals(Constants.EXIT_COMMAND)));
     }
@@ -90,7 +100,8 @@ public class Main {
     }
 
     private static void displayError(String message, Exception e) {
-        displayError(message + e.getMessage());                
+        displayError(message);
+        displayError(e.getMessage());                
     }
 
     private static void displayError(String message){
@@ -111,29 +122,33 @@ public class Main {
     private static void parseArguments(String[] args) {        
         for (int i = 0; i < args.length; i++){
             String filename = args[i];
-            int termsParsed = 0;
-            displayInfo(Constants.LOADING_FILE, filename);
-            try {
-                File file = new File(filename);
-                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF8"));
-                String line;
-                
-                while((line = bufferedReader.readLine()) != null)
-                {
-                    line = line.trim();
-                    if (!line.isEmpty()) {
-                        parseAndOutput(line);
-                        termsParsed++;
-                    }
-                }
-                bufferedReader.close();
-                displayInfo(Constants.LOADING_FILE, Integer.toString(termsParsed)+Constants.TERMS_PARSED);
-            } catch (IOException e) {
-                displayError(Constants.ERROR_UNABLE_OPEN_FILE + filename, e);
-            }
+            loadFile(filename);
         }
     }
 
+    private static void loadFile(String filename){
+        int termsParsed = 0;
+        displayInfo(Constants.LOADING_FILE, filename);
+        try {
+            File file = new File(filename);
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF8"));
+            String line;
+            
+            while((line = bufferedReader.readLine()) != null)
+            {
+                line = line.trim();
+                if (!line.isEmpty()) {
+                    parseAndOutput(line);
+                    termsParsed++;
+                }
+            }
+            bufferedReader.close();
+            displayInfo(Constants.LOADING_FILE, Integer.toString(termsParsed) + Constants.TERMS_PARSED);
+        } catch (IOException e) {
+            displayError(Constants.ERROR_UNABLE_OPEN_FILE + filename, e);
+        }
+    }
+    
     private static void parseAndOutput(String input){
         Console.print(Constants.LAMBDA + Constants.PROMPT, Constants.PROMPT_COLOR);
         String[] tokens = Tokeniser.Tokenise(input);

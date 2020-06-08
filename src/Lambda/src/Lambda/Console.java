@@ -204,27 +204,27 @@ public class Console {
     
     public static String readInput() throws IOException {        
         if (INSTANCE != null) {
-            String retVal = "";
+            String input = "";
             
-            int val = RawConsoleInput.read(false);
+            int charCode = RawConsoleInput.read(false);
             // While not <ENTER>
-            while(val != 13) {
+            while(charCode != Constants.CHAR_CODE_ENTER) {
                 // If we read a valid character...
-                if (val > 0 && val <= 122) {
+                if ((charCode > Constants.CHAR_CODE_MIN_VALID) && (charCode <= Constants.CHAR_CODE_MAX_VALID)) {
                     // If <ESC> pressed..
-                    if (val == 27) {
+                    if (charCode == Constants.CHAR_CODE_ESC) {
                         print("\n");
                         return Constants.QUIT_COMMAND;
-                    } else if (val == 8) { // If <BACKSPACE> pressed
-                        if (retVal.length() > 0) {
-                            print(Character.toString((char)val));
+                    } else if (charCode == Constants.CHAR_CODE_BACKSPACE) { // If <BACKSPACE> pressed
+                        if (input.length() > 0) {
+                            print(Character.toString((char)charCode));
                             print(Character.toString(' '));
-                            print(Character.toString((char)val));
-                            retVal = retVal.substring(0, retVal.length() - 1);
+                            print(Character.toString((char)charCode));
+                            input = input.substring(0, input.length() - 1);
                         }
                     } else {
-                        char ch = (char)val;
-                        retVal += ch;
+                        char ch = (char)charCode;
+                        input += ch;
                         // If user enters a forward-slash, substitute it for Greek lambda character
                         if ((ch ==  Constants.LAMBDA_SUBSTITUTE) || (ch == Constants.LAMBDA)) {
                             // Display lambda in yellow
@@ -241,16 +241,16 @@ public class Console {
                         }
                     }
                 }
-                val = RawConsoleInput.read(false);
+                charCode = RawConsoleInput.read(false);
             }
             println();
             
-            return retVal;
+            return input.trim();
         } else {
             BufferedReader br = new BufferedReader(new InputStreamReader(System.in));            
             String input = "";
             input = br.readLine();
-            return input;
+            return input.trim();
         }
     }       
 }

@@ -13,6 +13,14 @@ public class Constants {
     public static final Console.Color OPERATOR_COLOR                = Console.Color.GREEN;
     public static final Console.Color IDENTIFIER_COLOR              = Console.Color.WHITE_BOLD;
     
+    public static final int CHAR_CODE_ENTER                         = 13;
+    public static final int CHAR_CODE_MIN_VALID                     = 0;
+    public static final int CHAR_CODE_MAX_VALID                     = 122;
+    public static final int CHAR_CODE_ESC                           = 27;
+    public static final int CHAR_CODE_BACKSPACE                     = 8;
+    
+    
+    
     // Greek letters (and substitutes if we can't display)          // Upper  Lower   
     public static final char ALPHA                                  = '\u03B1'; // \u0391 \u03B1
     public static final char ALPHA_SUBSTITUTE                       = 'A';
@@ -29,6 +37,7 @@ public class Constants {
     public static final String DEBUG_COMMAND                        = "debug";
     public static final String HELP_COMMAND                         = "help";
     public static final String TERMS_COMMAND                        = "terms";
+    public static final String LOAD_COMMAND                         = "load";
     
     public static final String PROMPT                               = "> ";
     public static final String ON                                   = "On";
@@ -45,15 +54,16 @@ public class Constants {
     public static final String TERMS                                = "TERMS";
     public static final String TERMS_MESSAGE                        = " terms found";
     public static final String HELP_INFO_1                          = "blah blah blah";
-    public static final String HELP_INFO_2                          = "Commands: help      - this screen";
-    public static final String HELP_INFO_3                          = "          terms     - display all known terms";
-    public static final String HELP_INFO_4                          = "          debug     - toggle debug mode";
-    public static final String HELP_INFO_5                          = "          alpha     - alpha-equivalence";
-    public static final String HELP_INFO_6                          = "          exit/quit - leave the application";
+    public static final String HELP_INFO_2                          = "Commands: help            - this screen";
+    public static final String HELP_INFO_3                          = "          terms           - display all known terms";
+    public static final String HELP_INFO_4                          = "          debug           - toggle debug mode";
+    public static final String HELP_INFO_5                          = "          load <filename> - loads file";
+    public static final String HELP_INFO_6                          = "          alpha           - alpha-equivalence";
+    public static final String HELP_INFO_7                          = "          exit/quit       - leave the application";
     public static final String LAMBDA_CALCULUS                      = LAMBDA + "-CALCULUS";
     public static final String LAMBDA_CALCULUS_INFO                 = "Type 'help' for more information";
     
     public static final String ERROR_UNABLE_OPEN_FILE               = "Unable to read from file: ";
     public static final String ERROR_MUST_PROVIDE_ATLEAST_TWO_TERMS = "Must provide atleast 2 terms";
-    public static final String ERROR_READING_FROM_STDIN             = "Unable to read from from stdin: ";
+    public static final String ERROR_READING_FROM_STDIN             = "Unable to read from from stdin";
 }
