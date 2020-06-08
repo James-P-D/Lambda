@@ -10,18 +10,26 @@ A simple [Lambda Calculus](https://en.wikipedia.org/wiki/Lambda_calculus) expres
     2. [Beta Reduction](#Beta-Reduction)
     3. [Alpha Equivalence](#Alpha-Equivalence)
 2. [The Application](#The-Application)
-    * [Help](#Help)
-    * [Default Definitions](#Default-Definitions)
-    * [Loading Files](#Loading-Files)    
-    * [Debug Mode](#Debug-Mode)
-    * [Alpha Mode](#Alpha-Mode)
-    * [Quitting](#Quitting)
+    1. [Help](#Help)
+    2. [Default Definitions](#Default-Definitions)
+    3. [Loading Files](#Loading-Files)    
+    4. [Debug Mode](#Debug-Mode)
+    5. [Alpha Mode](#Alpha-Mode)
+    6. [Quitting](#Quitting)
 3. [Building Notes and Problems](#Building-Notes-and-Problems)
 4. [Acknowledgements](#Acknowledgements)
     
 ### Lambda Calculus
 
 If you already understand the Lambda Calculus, you can skip this section and head straight to [The Application](#The-Application).  
+
+Definition
+
+```
+<expression>  = <name> | <function> | <application>
+<function>    = λ<name>.<expression>
+<application> = <expression> <expression>
+```
 
 ### History
 
@@ -54,7 +62,7 @@ javac -cp ..\..\libs\jna-5.5.0.jar;..\..\libs\jna-platform-5.5.0.jar;. Constants
 java -classpath "C:\Users\jdorr\Desktop\Dev\Lambda\src\Lambda\bin;..\..\libs\jna-5.5.0.jar;..\..\libs\jna-platform-5.5.0.jar" Lambda.Main C:\Users\jdorr\Desktop\Dev\Lambda\src\Lambda\src\Lambda\definitions.lbd
 ```
 
-A fair amount of work went into getting the console I/O to work and display nicely. Since Java is fussy about support single-keypress-input, displaying Unicode characters (`λ`, `α`, etc.) and using colours, we need to use a bunch of Windows-specific stuff to achieve this. If you are struggling with inputting strings, or are seeing strange, non-printable values in the output, simply set `FANCY_UI` to false in [Console.Java](https://github.com/James-P-D/Lambda/blob/master/src/Lambda/src/Lambda/Console.java).
+A fair amount of work went into getting the console I/O to work and display nicely. Since Java is fussy about support single-keypress-input, displaying Unicode characters (`λ`, `α`, etc.) and using colours, we need to use a bunch of Windows-specific stuff to achieve this. If you are struggling with inputting strings, or are seeing strange, non-printable values in the output, simply set `FANCY_UI` to `false` in [Console.Java](https://github.com/James-P-D/Lambda/blob/master/src/Lambda/src/Lambda/Console.java).
 
 ### Acknowledgements
 
