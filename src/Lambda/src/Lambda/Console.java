@@ -16,6 +16,9 @@ import com.sun.jna.platform.win32.WinNT.HANDLE;
 // (Especially the outputting of Unicode!)
 
 public class Console {
+
+    private static boolean FANCY_UI = true;
+    
     enum Color {
         //Color end string, color reset
         RESET                       ("\033[0m"),    // Reset to default
@@ -110,23 +113,25 @@ public class Console {
     }
         
     static {
-        String os = System.getProperty("os.name").toLowerCase();
-        if (os.startsWith("win")) {         
-            INSTANCE = (Kernel32) Native.load("kernel32", Kernel32.class);
-            
-            Function GetStdHandleFunc = Function.getFunction("kernel32", "GetStdHandle");
-            DWORD STD_OUTPUT_HANDLE = new DWORD(-11);
-            HANDLE hOut = (HANDLE)GetStdHandleFunc.invoke(HANDLE.class, new Object[]{STD_OUTPUT_HANDLE});
+        if (FANCY_UI) {
+            String os = System.getProperty("os.name").toLowerCase();
+            if (os.startsWith("win")) {
+                INSTANCE = (Kernel32) Native.load("kernel32", Kernel32.class);
+                
+                Function GetStdHandleFunc = Function.getFunction("kernel32", "GetStdHandle");
+                DWORD STD_OUTPUT_HANDLE = new DWORD(-11);
+                HANDLE hOut = (HANDLE)GetStdHandleFunc.invoke(HANDLE.class, new Object[]{STD_OUTPUT_HANDLE});
+                
+                DWORDByReference p_dwMode = new DWORDByReference(new DWORD(0));
+                Function GetConsoleModeFunc = Function.getFunction("kernel32", "GetConsoleMode");
+                GetConsoleModeFunc.invoke(BOOL.class, new Object[]{hOut, p_dwMode});
 
-            DWORDByReference p_dwMode = new DWORDByReference(new DWORD(0));
-            Function GetConsoleModeFunc = Function.getFunction("kernel32", "GetConsoleMode");
-            GetConsoleModeFunc.invoke(BOOL.class, new Object[]{hOut, p_dwMode});
-
-            int ENABLE_VIRTUAL_TERMINAL_PROCESSING = 4;
-            DWORD dwMode = p_dwMode.getValue();
-            dwMode.setValue(dwMode.intValue() | ENABLE_VIRTUAL_TERMINAL_PROCESSING);
-            Function SetConsoleModeFunc = Function.getFunction("kernel32", "SetConsoleMode");
-            SetConsoleModeFunc.invoke(BOOL.class, new Object[]{hOut, dwMode});
+                int ENABLE_VIRTUAL_TERMINAL_PROCESSING = 4;
+                DWORD dwMode = p_dwMode.getValue();
+                dwMode.setValue(dwMode.intValue() | ENABLE_VIRTUAL_TERMINAL_PROCESSING);
+                Function SetConsoleModeFunc = Function.getFunction("kernel32", "SetConsoleMode");
+                SetConsoleModeFunc.invoke(BOOL.class, new Object[]{hOut, dwMode});
+            }
         }
     }
 
@@ -203,7 +208,7 @@ public class Console {
     }
     
     public static String readInput() throws IOException {        
-        if (INSTANCE != null) {
+        if (FANCY_UI && (INSTANCE != null)) {
             String input = "";
             
             int charCode = RawConsoleInput.read(false);
