@@ -6,6 +6,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /*
  * No shorthand
@@ -17,13 +19,19 @@ import java.util.ArrayList;
    
  * Check case of input (for both terms and commands)
 
+ * Use alpha-eqivalence to check if final value matches an existing term
+
  */
 
 public class Main {
+
+    private static Map<String, String> terms;
     
     public static void main(String[] args) {                
         parseArguments(args);
 
+        terms = new HashMap<String, String>();
+        
         displayInfo(Constants.LAMBDA_CALCULUS, Constants.LAMBDA_CALCULUS_INFO);
         
         String input = "";
@@ -78,7 +86,7 @@ public class Main {
             } else if ((input.equals(Constants.QUIT_COMMAND)) || (input.equals(Constants.EXIT_COMMAND))) {
                 displayInfo(Constants.QUITTING, Constants.QUIT_MESSAGE);
             } else {
-                
+                parse(input);
             }
         } while ((!input.equals(Constants.QUIT_COMMAND)) && (!input.equals(Constants.EXIT_COMMAND)));
     }
@@ -168,4 +176,16 @@ public class Main {
         Console.println();
     }
 
+    private static void parse(String input) {
+        String[] tokens = Tokeniser.Tokenise(input);
+        for (int i = 0; i < tokens.length; i++) {
+            String token = tokens[i];
+            parse(token);
+        }
+    }
+    
+    private static void parse(String[] token) {
+        
+    }
+    }
 }

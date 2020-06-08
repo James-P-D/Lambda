@@ -12,9 +12,6 @@ import com.sun.jna.*;
 import com.sun.jna.platform.win32.WinDef.*;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 
-// Much of this code is butched from @author Sandy_Yin - https://stackoverflow.com/users/1157731/yin-shan
-// (Especially the outputting of Unicode!)
-
 public class Console {
 
     private static boolean FANCY_UI = true;
