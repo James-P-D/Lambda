@@ -226,21 +226,8 @@ public class Console {
                         }
                     } else {
                         char ch = (char)charCode;
-                        input += ch;
-                        // If user enters a forward-slash, substitute it for Greek lambda character
-                        if ((ch ==  Constants.LAMBDA_SUBSTITUTE) || (ch == Constants.LAMBDA)) {
-                            // Display lambda in yellow
-                            print(Character.toString(Constants.LAMBDA), Constants.LAMBDA_COLOR);
-                        } else if ((ch ==  Constants.PERIOD) ||
-                                   (ch ==  Constants.EQUALS) ||
-                                   (ch ==  Constants.OPEN_PARENTHESES) ||
-                                   (ch ==  Constants.CLOSE_PARENTHESES)) {
-                            // Display all other symbols in green
-                            print(Character.toString(ch), Constants.OPERATOR_COLOR);
-                        } else {
-                            // Display all variables, terms, etc. in white
-                            print(Character.toString(ch), Constants.IDENTIFIER_COLOR);
-                        }
+                        outputToken(Character.toString(ch));
+                        input += ch;                        
                     }
                 }
                 charCode = RawConsoleInput.read(false);
@@ -255,4 +242,22 @@ public class Console {
             return input.trim();
         }
     }       
+    
+    public static void outputToken(String token) {
+        // If user enters a forward-slash, substitute it for Greek lambda character
+        if ((token.equals(Character.toString(Constants.LAMBDA_SUBSTITUTE))) || 
+            (token.equals(Character.toString(Constants.LAMBDA)))) {
+            // Display lambda in yellow
+            print(Character.toString(Constants.LAMBDA), Constants.LAMBDA_COLOR);
+        } else if ((token.equals(Character.toString(Constants.PERIOD))) ||
+                   (token.equals(Character.toString(Constants.EQUALS))) ||
+                   (token.equals(Character.toString(Constants.OPEN_PARENTHESES))) ||
+                   (token.equals(Character.toString(Constants.CLOSE_PARENTHESES)))) {
+            // Display all other symbols in green
+            print(token, Constants.OPERATOR_COLOR);
+        } else {
+            // Display all variables, terms, etc. in white
+            print(token, Constants.IDENTIFIER_COLOR);
+        }
+    }
 }

@@ -28,16 +28,16 @@ public class Main {
     private static Map<String, LambdaExpression> terms;
     
     public static void main(String[] args) {   
-        parseArguments(args);
-
         terms = new HashMap<String, LambdaExpression>();
         
+        parseArguments(args);
+
         displayInfo(Constants.LAMBDA_CALCULUS, Constants.LAMBDA_CALCULUS_INFO);
-        
+
         String input = "";
         boolean debugMode = false;
 
-        do {
+        do {            
             Console.print(Constants.LAMBDA + Constants.PROMPT,  Constants.PROMPT_COLOR);        
             try {
                 input = Console.readInput().toLowerCase();
@@ -86,20 +86,25 @@ public class Main {
             } else if ((input.equals(Constants.QUIT_COMMAND)) || (input.equals(Constants.EXIT_COMMAND))) {
                 displayInfo(Constants.QUITTING, Constants.QUIT_MESSAGE);
             } else {
-                parse(input);
+                initialParse(input);
             }
         } while ((!input.equals(Constants.QUIT_COMMAND)) && (!input.equals(Constants.EXIT_COMMAND)));
     }
 
-    private static void displayAllTerms(){
-        displayInfo(Constants.TERMS, Integer.toString(0) + Constants.TERMS_MESSAGE);
-    }
-    
-    public static boolean stringIsSingleChar(String str, char ch) {
-        if ((str != null) && (str.length() == 1)) { 
-            return str.charAt(0) == ch;
+    private static void displayAllTerms() {
+        int termsFound = 0;
+        for(Map.Entry<String, LambdaExpression> term : terms.entrySet()) {
+            String termName = term.getKey();
+            LambdaExpression termExpression = term.getValue();
+            Console.outputToken(termName);
+            Console.outputToken(Character.toString(Constants.SPACE));
+            Console.outputToken(Character.toString(Constants.EQUALS));
+            Console.outputToken(Character.toString(Constants.SPACE));
+            Console.outputToken(termExpression.OutputString());
+            Console.println();
+            termsFound++;
         }
-        return false;
+        displayInfo(Constants.TERMS, Integer.toString(termsFound) + Constants.TERMS_MESSAGE);
     }
     
     private static void displayWarning(String message) {
@@ -144,9 +149,10 @@ public class Main {
             
             while((line = bufferedReader.readLine()) != null)
             {
-                line = line.trim();
+                line = line.toLowerCase().trim();
                 if (!line.isEmpty()) {
-                    parseAndOutput(line);
+                    //parseAndOutput(line);
+                    initialParse(line);
                     termsParsed++;
                 }
             }
@@ -162,28 +168,59 @@ public class Main {
         String[] tokens = Tokeniser.Tokenise(input);
         for (int i = 0; i < tokens.length; i++) {
             String token = tokens[i];
-            if (stringIsSingleChar(token, Constants.LAMBDA)) {
-                Console.print(token, Constants.LAMBDA_COLOR);                
-            } else if ((stringIsSingleChar(token, Constants.OPEN_PARENTHESES)) ||
-                       (stringIsSingleChar(token, Constants.CLOSE_PARENTHESES)) ||
-                       (stringIsSingleChar(token, Constants.EQUALS)) ||
-                       (stringIsSingleChar(token, Constants.PERIOD))) {
-                Console.print(token, Constants.OPERATOR_COLOR);                        
-            } else {
-                Console.print(token, Constants.IDENTIFIER_COLOR);              
-            }
+            Console.outputToken(token);
         }
         Console.println();
     }
 
-    private static void parse(String input) {
-        String[] tokens = Tokeniser.Tokenise(input);
-        for (int i = 0; i < tokens.length; i++) {
-            String token = tokens[i];
-            if (token.length() == 1) {
-                
-            } else {
-            }
+    private static boolean validIdentifierName(String name) {
+        String validFirstCharacter = "abcdefghijklmnopqrstuvwxyz_";
+        String validRestCharacters = validFirstCharacter + "0123456789"; 
+        if (name.length() == 0) {
+            return false;
         }
-    }   
+        for (int i = 0; i < name.length(); i++) {
+            char ch = name.charAt(i);
+            if (i == 0) {
+                if (!validFirstCharacter.contains(Character.toString(ch))) {
+                    return false;
+                }
+            } else {
+                if (!validRestCharacters.contains(Character.toString(ch))) {
+                    return false;
+                }
+            }            
+        }
+        
+        return true;
+    }
+    
+    private static void initialParse(String input) {
+        String[] tokens = Tokeniser.Tokenise(input);
+        if ((tokens.length >= 3) && (tokens[1].equals(Character.toString(Constants.EQUALS)))) {
+            String termName = tokens[0];
+            if (!validIdentifierName(termName)) {
+                displayError(Constants.INVALID_IDENTIFIER_NAME + termName);
+                return;
+            }
+            if (terms.containsKey(termName)) {
+                displayWarning(Constants.WARNING_TERM_ALREADY_DEFINED + termName);
+            }
+            LambdaExpression expression = parse(tokens, 3);
+            terms.put(termName, expression);
+        } else {
+        }
+//        for (int i = 0; i < tokens.length; i++) {
+//            String token = tokens[i];
+//        }
+    }
+    
+    private static LambdaExpression parse(String[] tokens, int index) {
+        while(index < tokens.length) {
+            String token = tokens[index];
+            index++;
+        }
+        
+        return new LambdaName("foo");
+    }
 }

@@ -64,6 +64,9 @@ public class Constants {
     public static final String LAMBDA_CALCULUS_INFO                 = "Type 'help' for more information";
     
     public static final String ERROR_UNABLE_OPEN_FILE               = "Unable to read from file: ";
-    public static final String ERROR_MUST_PROVIDE_ATLEAST_TWO_TERMS = "Must provide atleast 2 terms";
+    public static final String ERROR_MUST_PROVIDE_ATLEAST_TWO_TERMS = "Must provide at least two terms";
     public static final String ERROR_READING_FROM_STDIN             = "Unable to read from from stdin";
+    public static final String INVALID_IDENTIFIER_NAME              = "Invalid name: ";
+    
+    public static final String WARNING_TERM_ALREADY_DEFINED         = "Term already defined: ";
 }
