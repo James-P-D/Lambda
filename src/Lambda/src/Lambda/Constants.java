@@ -1,5 +1,7 @@
 package Lambda;
 
+import java.util.ArrayList;
+
 public class Constants {
     public static final char COMMENT                                = '#';
     public static final char PERIOD                                 = '.';
@@ -69,7 +71,20 @@ public class Constants {
     public static final String ERROR_INVALID_IDENTIFIER_NAME        = "Invalid name: ";
     public static final String ERROR_BADLY_FORMATTED_FUNCTION       = "Badly formatted function";
     public static final String ERROR_EXPECTED_PERIOD_IN_FUNCTION    = "Expected period in function";
-    
-    
+        
     public static final String WARNING_TERM_ALREADY_DEFINED         = "Term already defined: ";
+    
+    public static final ArrayList<String> allCommands               = new ArrayList<String>() {{
+            add("QUIT_COMMAND");
+            add("EXIT_COMMAND");
+            add("ALPHA_COMMAND");
+            add("QUIT_COMMAND");
+            add("DEBUG_COMMAND");
+            add("HELP_COMMAND");
+            add("TERMS_COMMAND");
+            add("LOAD_COMMAND");
+        }
+        private static final long serialVersionUID = -3995135037673286855L;
+    };
+    
 }

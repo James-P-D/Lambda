@@ -199,12 +199,18 @@ public class Main {
         Console.println();
     }
 
-    private static boolean validIdentifierName(String name) {
+    private static boolean isValidIdentifierName(String name) {
         String validFirstCharacter = "abcdefghijklmnopqrstuvwxyz_";
         String validRestCharacters = validFirstCharacter + "0123456789"; 
+        
         if (name.length() == 0) {
             return false;
         }
+        
+        if (Constants.allCommands.contains(name)) {
+            return false;
+        }
+        
         for (int i = 0; i < name.length(); i++) {
             char ch = name.charAt(i);
             if (i == 0) {
@@ -231,7 +237,7 @@ public class Main {
     
     private static String parseTermDeclaration(String[] tokens) throws ParseException {
         String termName = tokens[0];
-        if (!validIdentifierName(termName)) {
+        if (!isValidIdentifierName(termName)) {
             throw new ParseException(Constants.ERROR_INVALID_IDENTIFIER_NAME + termName);
         }
         if (termAlreadyExists(termName)) {
@@ -269,7 +275,7 @@ public class Main {
     
     private static LambdaName parseLambdaName(String[] tokens, int index) throws ParseException {
         String termName = tokens[index];
-        if (!validIdentifierName(termName)) {
+        if (!isValidIdentifierName(termName)) {
             throw new ParseException(Constants.ERROR_INVALID_IDENTIFIER_NAME + termName);
         }        
 
