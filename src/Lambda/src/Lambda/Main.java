@@ -211,16 +211,13 @@ public class Main {
             return false;
         }
         
-        for (int i = 0; i < name.length(); i++) {
-            char ch = name.charAt(i);
-            if (i == 0) {
-                if (!validFirstCharacter.contains(Character.toString(ch))) {
-                    return false;
-                }
-            } else {
-                if (!validRestCharacters.contains(Character.toString(ch))) {
-                    return false;
-                }
+        if (!validFirstCharacter.contains(Character.toString(name.charAt(0)))) {
+            return false;
+        }
+
+        for (int i = 1; i < name.length(); i++) {
+            if (!validRestCharacters.contains(Character.toString(name.charAt(i)))) {
+                return false;
             }            
         }
         
