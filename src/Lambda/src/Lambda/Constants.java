@@ -19,8 +19,6 @@ public class Constants {
     public static final int CHAR_CODE_ESC                           = 27;
     public static final int CHAR_CODE_BACKSPACE                     = 8;
     
-    
-    
     // Greek letters (and substitutes if we can't display)          // Upper  Lower   
     public static final char ALPHA                                  = '\u03B1'; // \u0391 \u03B1
     public static final char ALPHA_SUBSTITUTE                       = 'A';
@@ -63,10 +61,13 @@ public class Constants {
     public static final String LAMBDA_CALCULUS                      = LAMBDA + "-CALCULUS";
     public static final String LAMBDA_CALCULUS_INFO                 = "Type 'help' for more information";
     
+    public static final String ERRORS_FOUND                         = " error found";
     public static final String ERROR_UNABLE_OPEN_FILE               = "Unable to read from file: ";
     public static final String ERROR_MUST_PROVIDE_ATLEAST_TWO_TERMS = "Must provide at least two terms";
     public static final String ERROR_READING_FROM_STDIN             = "Unable to read from from stdin";
-    public static final String INVALID_IDENTIFIER_NAME              = "Invalid name: ";
+    public static final String ERROR_PARSE_EXCEPTION                = "Parse exception";
+    public static final String ERROR_INVALID_IDENTIFIER_NAME        = "Invalid name: ";
+    public static final String ERROR_BADLY_FORMATTED_FUNCTION       = "Badly formatted function";
     
     public static final String WARNING_TERM_ALREADY_DEFINED         = "Term already defined: ";
 }

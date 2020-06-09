@@ -86,7 +86,11 @@ public class Main {
             } else if ((input.equals(Constants.QUIT_COMMAND)) || (input.equals(Constants.EXIT_COMMAND))) {
                 displayInfo(Constants.QUITTING, Constants.QUIT_MESSAGE);
             } else {
-                initialParse(input);
+                try {
+                    initialParse(input);
+                } catch (ParseException e) {
+                    displayError(Constants.ERROR_PARSE_EXCEPTION, e);
+                }
             }
         } while ((!input.equals(Constants.QUIT_COMMAND)) && (!input.equals(Constants.EXIT_COMMAND)));
     }
@@ -141,6 +145,7 @@ public class Main {
 
     private static void loadFile(String filename){
         int termsParsed = 0;
+        int errors = 0;
         displayInfo(Constants.LOADING_FILE, filename);
         try {
             File file = new File(filename);
@@ -152,12 +157,20 @@ public class Main {
                 line = line.toLowerCase().trim();
                 if (!line.isEmpty()) {
                     //parseAndOutput(line);
-                    initialParse(line);
-                    termsParsed++;
+                    try {
+                        initialParse(line);
+                        termsParsed++;
+                    } catch (ParseException e) {
+                        displayError(Constants.ERROR_PARSE_EXCEPTION, e);
+                        errors++;
+                    }
                 }
             }
             bufferedReader.close();
             displayInfo(Constants.LOADING_FILE, Integer.toString(termsParsed) + Constants.TERMS_PARSED);
+            if (errors > 0) {
+                displayError(Integer.toString(errors) + Constants.ERRORS_FOUND);
+            }
         } catch (IOException e) {
             displayError(Constants.ERROR_UNABLE_OPEN_FILE + filename, e);
         }
@@ -195,13 +208,12 @@ public class Main {
         return true;
     }
     
-    private static void initialParse(String input) {
+    private static void initialParse(String input) throws ParseException {
         String[] tokens = Tokeniser.Tokenise(input);
         if ((tokens.length >= 3) && (tokens[1].equals(Character.toString(Constants.EQUALS)))) {
             String termName = tokens[0];
             if (!validIdentifierName(termName)) {
-                displayError(Constants.INVALID_IDENTIFIER_NAME + termName);
-                return;
+                throw new ParseException(Constants.ERROR_INVALID_IDENTIFIER_NAME + termName);
             }
             if (terms.containsKey(termName)) {
                 displayWarning(Constants.WARNING_TERM_ALREADY_DEFINED + termName);
@@ -215,12 +227,22 @@ public class Main {
 //        }
     }
     
-    private static LambdaExpression parse(String[] tokens, int index) {
+    private static LambdaExpression parse(String[] tokens, int index) throws ParseException {
         while(index < tokens.length) {
             String token = tokens[index];
+            if ((token.equals(Character.toString(Constants.LAMBDA))) || (token.equals(Character.toString(Constants.LAMBDA_SUBSTITUTE)))) {
+                return parseLambdaFunction(tokens, index + 1);
+            }
             index++;
         }
         
         return new LambdaName("foo");
+    }
+    
+    private static LambdaFunction parseLambdaFunction(String[] tokens, int index) throws ParseException {
+        if (tokens.length < (index + 3)) {
+            throw new ParseException(Constants.ERROR_BADLY_FORMATTED_FUNCTION);
+        }
+        return (LambdaFunction)null;
     }
 }
