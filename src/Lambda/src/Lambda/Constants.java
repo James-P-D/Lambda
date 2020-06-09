@@ -68,6 +68,8 @@ public class Constants {
     public static final String ERROR_PARSE_EXCEPTION                = "Parse exception";
     public static final String ERROR_INVALID_IDENTIFIER_NAME        = "Invalid name: ";
     public static final String ERROR_BADLY_FORMATTED_FUNCTION       = "Badly formatted function";
+    public static final String ERROR_EXPECTED_PERIOD_IN_FUNCTION    = "Expected period in function";
+    
     
     public static final String WARNING_TERM_ALREADY_DEFINED         = "Term already defined: ";
 }

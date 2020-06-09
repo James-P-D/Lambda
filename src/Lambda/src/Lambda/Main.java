@@ -87,7 +87,14 @@ public class Main {
                 displayInfo(Constants.QUITTING, Constants.QUIT_MESSAGE);
             } else {
                 try {
-                    initialParse(input);
+                    String[] tokens = Tokeniser.Tokenise(input);
+                    if (isTermDeclaration(tokens)) {
+                        String termName = parseTermDeclaration(tokens);
+                        System.out.println("TERM: "+ termName + " " + terms.get(termName).OutputString());
+                    } else {
+                        LambdaExpression expression = parseExpression(tokens, 0);
+                        System.out.println("EXPRESION: " + expression.OutputString());
+                    }
                 } catch (ParseException e) {
                     displayError(Constants.ERROR_PARSE_EXCEPTION, e);
                 }
@@ -158,8 +165,14 @@ public class Main {
                 if (!line.isEmpty()) {
                     //parseAndOutput(line);
                     try {
-                        initialParse(line);
-                        termsParsed++;
+                        String[] tokens = Tokeniser.Tokenise(line);                        
+                        if (isTermDeclaration(tokens)) {
+                            parseTermDeclaration(tokens);
+                            termsParsed++;
+                        } else {
+                            //TODO: Fix!
+                            displayError("WHAT DO WE DO HERE?");
+                        }
                     } catch (ParseException e) {
                         displayError(Constants.ERROR_PARSE_EXCEPTION, e);
                         errors++;
@@ -207,33 +220,37 @@ public class Main {
         
         return true;
     }
-    
-    private static void initialParse(String input) throws ParseException {
-        String[] tokens = Tokeniser.Tokenise(input);
-        if ((tokens.length >= 3) && (tokens[1].equals(Character.toString(Constants.EQUALS)))) {
-            String termName = tokens[0];
-            if (!validIdentifierName(termName)) {
-                throw new ParseException(Constants.ERROR_INVALID_IDENTIFIER_NAME + termName);
-            }
-            if (terms.containsKey(termName)) {
-                displayWarning(Constants.WARNING_TERM_ALREADY_DEFINED + termName);
-            }
-            LambdaExpression expression = parse(tokens, 3);
-            terms.put(termName, expression);
-        } else {
-        }
-//        for (int i = 0; i < tokens.length; i++) {
-//            String token = tokens[i];
-//        }
+ 
+    private static boolean termAlreadyExists(String termName) {
+        return terms.containsKey(termName);            
     }
     
-    private static LambdaExpression parse(String[] tokens, int index) throws ParseException {
+    private static boolean isTermDeclaration(String[] tokens) {
+        return ((tokens.length >= 3) && (tokens[1].equals(Character.toString(Constants.EQUALS))));
+    }
+    
+    private static String parseTermDeclaration(String[] tokens) throws ParseException {
+        String termName = tokens[0];
+        if (!validIdentifierName(termName)) {
+            throw new ParseException(Constants.ERROR_INVALID_IDENTIFIER_NAME + termName);
+        }
+        if (termAlreadyExists(termName)) {
+            displayWarning(Constants.WARNING_TERM_ALREADY_DEFINED + termName);
+        }
+        LambdaExpression expression = parseExpression(tokens, 2);
+        terms.put(termName, expression);
+        return termName;
+    }
+    
+    private static LambdaExpression parseExpression(String[] tokens, int index) throws ParseException {
         while(index < tokens.length) {
             String token = tokens[index];
             if ((token.equals(Character.toString(Constants.LAMBDA))) || (token.equals(Character.toString(Constants.LAMBDA_SUBSTITUTE)))) {
                 return parseLambdaFunction(tokens, index + 1);
+            } else {
+                return parseLambdaName(tokens, index);
             }
-            index++;
+            //index++;
         }
         
         return new LambdaName("foo");
@@ -243,6 +260,19 @@ public class Main {
         if (tokens.length < (index + 3)) {
             throw new ParseException(Constants.ERROR_BADLY_FORMATTED_FUNCTION);
         }
-        return (LambdaFunction)null;
+        if (!tokens[index + 1].equals(Character.toString(Constants.PERIOD))) {
+            throw new ParseException(Constants.ERROR_EXPECTED_PERIOD_IN_FUNCTION);
+        }
+        
+        return new LambdaFunction(parseLambdaName(tokens, index), parseExpression(tokens, index + 2));
+    }
+    
+    private static LambdaName parseLambdaName(String[] tokens, int index) throws ParseException {
+        String termName = tokens[index];
+        if (!validIdentifierName(termName)) {
+            throw new ParseException(Constants.ERROR_INVALID_IDENTIFIER_NAME + termName);
+        }        
+
+        return new LambdaName(termName);
     }
 }

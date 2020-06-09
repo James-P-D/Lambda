@@ -5,7 +5,11 @@ public class ParseException extends Exception {
     // TODO: Do we need this?
     //public ParseException() {}
 
-    // Constructor that accepts a message
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
+
     public ParseException(String message)
     {
        super(message);

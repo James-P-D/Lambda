@@ -19,20 +19,8 @@ public class LambdaApplication extends LambdaExpression {
     
     @Override
     public String OutputString() {
-        String str = "";
-        if (firstExpression instanceof LambdaName) {
-            str += firstExpression.OutputString();
-        } else {
-            str += Constants.OPEN_PARENTHESES + firstExpression.OutputString() + Constants.CLOSE_PARENTHESES;
-        }
-        
-        str += Constants.SPACE;
-        
-        if (secondExpression instanceof LambdaName) {
-            str += secondExpression.OutputString();
-        } else {
-            str += Constants.OPEN_PARENTHESES + secondExpression.OutputString() + Constants.CLOSE_PARENTHESES;
-        }
-        return str;
+        return Constants.OPEN_PARENTHESES + firstExpression.OutputString() + Constants.CLOSE_PARENTHESES +
+               Constants.SPACE +
+               Constants.OPEN_PARENTHESES + secondExpression.OutputString() + Constants.CLOSE_PARENTHESES;
     }
 }
