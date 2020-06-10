@@ -14,7 +14,8 @@ import com.sun.jna.platform.win32.WinNT.HANDLE;
 
 public class Console {
 
-    private static boolean FANCY_UI = true;
+    //private static boolean FANCY_UI = true;
+    private static boolean FANCY_UI = false;
     
     enum Color {
         //Color end string, color reset

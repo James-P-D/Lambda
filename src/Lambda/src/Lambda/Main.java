@@ -19,7 +19,7 @@ import java.util.Map;
    
  * Check case of input (for both terms and commands)
 
- * Use alpha-eqivalence to check if final value matches an existing term
+ * Use alpha-equivalence to check if final value matches an existing term
 
  */
 
@@ -40,7 +40,7 @@ public class Main {
         do {            
             Console.print(Constants.LAMBDA + Constants.PROMPT,  Constants.PROMPT_COLOR);        
             try {
-                input = Console.readInput().toLowerCase();
+                input = Console.readInput().toLowerCase().trim();
             } catch (IOException e) {
                 displayError(Constants.ERROR_READING_FROM_STDIN, e);
                 continue;
@@ -88,12 +88,14 @@ public class Main {
             } else {
                 try {
                     String[] tokens = Tokeniser.Tokenise(input);
-                    if (isTermDeclaration(tokens)) {
-                        String termName = parseTermDeclaration(tokens);
-                        System.out.println("TERM: "+ termName + " " + terms.get(termName).OutputString());
-                    } else {
-                        LambdaExpression expression = parseExpression(tokens, 0);
-                        System.out.println("EXPRESION: " + expression.OutputString());
+                    if (tokens.length > 0) {
+                        if (isTermDeclaration(tokens)) {
+                            String termName = parseTermDeclaration(tokens);
+                            System.out.println("TERM: "+ termName + " " + terms.get(termName).OutputString());
+                        } else {
+                            LambdaExpression expression = parseExpression(tokens, new IntRef(0));
+                            System.out.println("EXPRESION: " + expression.OutputString());
+                        }
                     }
                 } catch (ParseException e) {
                     displayError(Constants.ERROR_PARSE_EXCEPTION, e);
@@ -122,17 +124,24 @@ public class Main {
         Console.print(Constants.WARNING + ": ", Console.Color.YELLOW);
         Console.println(message, Console.Color.YELLOW_BRIGHT);                
     }
+    
+    private static void displayError(String message){
+        Console.print(Constants.ERROR + ": ", Console.Color.RED);
+        Console.println(message, Console.Color.RED_BRIGHT);                
+    }
 
     private static void displayError(String message, Exception e) {
         displayError(message);
         displayError(e.getMessage());                
     }
 
-    private static void displayError(String message){
-        Console.print(Constants.ERROR + ": ", Console.Color.RED);
-        Console.println(message, Console.Color.RED_BRIGHT);                
+    private static void displayError(String message, String line, Exception e) {
+        displayError(message);
+        displayError(line);
+        displayError(e.getMessage());                
     }
 
+    
     private static void displayInfo(String label, String message){
         Console.print(label + ": ", Console.Color.BLUE);
         Console.println(message, Console.Color.BLUE_BRIGHT);
@@ -152,7 +161,10 @@ public class Main {
 
     private static void loadFile(String filename){
         int termsParsed = 0;
+        int expressionsParsed = 0;        
         int errors = 0;
+        int lineNumber = 0;
+        
         displayInfo(Constants.LOADING_FILE, filename);
         try {
             File file = new File(filename);
@@ -161,26 +173,29 @@ public class Main {
             
             while((line = bufferedReader.readLine()) != null)
             {
+                lineNumber++;
                 line = line.toLowerCase().trim();
-                if (!line.isEmpty()) {
-                    //parseAndOutput(line);
-                    try {
-                        String[] tokens = Tokeniser.Tokenise(line);                        
+                try {
+                    String[] tokens = Tokeniser.Tokenise(line);
+                    if (tokens.length > 0) {
                         if (isTermDeclaration(tokens)) {
-                            parseTermDeclaration(tokens);
+                            String termName = parseTermDeclaration(tokens);
+                            System.out.println(terms.get(termName).OutputString());
                             termsParsed++;
                         } else {
-                            //TODO: Fix!
-                            displayError("WHAT DO WE DO HERE?");
+                            LambdaExpression expression = parseExpression(tokens, new IntRef(0));
+                            System.out.println(expression.OutputString());
+                            expressionsParsed++;
                         }
-                    } catch (ParseException e) {
-                        displayError(Constants.ERROR_PARSE_EXCEPTION, e);
-                        errors++;
                     }
+                } catch (ParseException e) {
+                    displayError(Constants.ERROR_PARSE_EXCEPTION_ON_LINE + lineNumber, line, e);
+                    errors++;
                 }
             }
             bufferedReader.close();
             displayInfo(Constants.LOADING_FILE, Integer.toString(termsParsed) + Constants.TERMS_PARSED);
+            displayInfo(Constants.LOADING_FILE, Integer.toString(expressionsParsed) + Constants.EXPRESSIONS_PARSED);
             if (errors > 0) {
                 displayError(Integer.toString(errors) + Constants.ERRORS_FOUND);
             }
@@ -237,41 +252,102 @@ public class Main {
         if (!isValidIdentifierName(termName)) {
             throw new ParseException(Constants.ERROR_INVALID_IDENTIFIER_NAME + termName);
         }
+        
         if (termAlreadyExists(termName)) {
             displayWarning(Constants.WARNING_TERM_ALREADY_DEFINED + termName);
         }
-        LambdaExpression expression = parseExpression(tokens, 2);
+        
+        LambdaExpression expression = parseExpression(tokens, new IntRef(2));
         terms.put(termName, expression);
         return termName;
     }
     
-    private static LambdaExpression parseExpression(String[] tokens, int index) throws ParseException {
-        while(index < tokens.length) {
-            String token = tokens[index];
-            if ((token.equals(Character.toString(Constants.LAMBDA))) || (token.equals(Character.toString(Constants.LAMBDA_SUBSTITUTE)))) {
-                return parseLambdaFunction(tokens, index + 1);
-            } else {
-                return parseLambdaName(tokens, index);
+    private static LambdaExpression parseExpression(String[] tokens, IntRef index) throws ParseException {
+        String token = tokens[index.value];
+        if ((token.equals(Character.toString(Constants.LAMBDA))) || (token.equals(Character.toString(Constants.LAMBDA_SUBSTITUTE)))) {
+            index.value++;
+            return parseLambdaFunction(tokens, index);
+        } else if (token.equals(Character.toString(Constants.OPEN_PARENTHESES))) {
+            LambdaExpression rootExpression = null;
+            LambdaExpression firstExpression = null;
+                
+            index.value++;
+            do {                                            
+                LambdaExpression exp = parseExpression(tokens, index);
+                if (firstExpression == null) {
+                    firstExpression = exp;
+                } else {
+                    if (rootExpression == null) {
+                        rootExpression = new LambdaApplication(firstExpression, exp);
+                        firstExpression = exp;
+                    } else {
+                        firstExpression = new LambdaApplication(firstExpression, exp);
+                        firstExpression = exp;
+                    }
+                }
+
+                index.value++;
+                if(index.value == tokens.length) {
+                    throw new ParseException(Constants.ERROR_UNBALANCED_PARENTHESES);
+                }
+                
+                token = tokens[index.value];
+            } while (!token.equals(Character.toString(Constants.CLOSE_PARENTHESES)));
+                
+            if (rootExpression == null) {
+                rootExpression = firstExpression;
             }
-            //index++;
+                
+            if (rootExpression == null) {
+                //TODO: Are we at the end of the list?
+                throw new ParseException(Constants.ERROR_NOTHING_TO_PARSE);
+            }
+                
+            return rootExpression;            
+        } else {
+            LambdaExpression rootExpression = null;
+            LambdaExpression firstExpression = null;
+                
+            do {                                            
+                LambdaExpression exp = parseExpression(tokens, index);
+                if (firstExpression == null) {
+                    firstExpression = exp;
+                } else {
+                    if (rootExpression == null) {
+                        rootExpression = new LambdaApplication(firstExpression, exp);
+                        firstExpression = exp;
+                    } else {
+                        firstExpression = new LambdaApplication(firstExpression, exp);
+                        firstExpression = exp;
+                    }
+                }
+
+                index.value++;
+                if(index.value == tokens.length) {
+                    throw new ParseException(Constants.ERROR_UNBALANCED_PARENTHESES);
+                }
+                
+                token = tokens[index.value];
+            } while (!token.equals(Character.toString(Constants.CLOSE_PARENTHESES)));
+            
+            return rootExpression;
         }
-        
-        return new LambdaName("foo");
     }
     
-    private static LambdaFunction parseLambdaFunction(String[] tokens, int index) throws ParseException {
-        if (tokens.length < (index + 3)) {
+    private static LambdaFunction parseLambdaFunction(String[] tokens, IntRef index) throws ParseException {
+        if (tokens.length < (index.value + 3)) {
             throw new ParseException(Constants.ERROR_BADLY_FORMATTED_FUNCTION);
         }
-        if (!tokens[index + 1].equals(Character.toString(Constants.PERIOD))) {
+        if (!tokens[index.value + 1].equals(Character.toString(Constants.PERIOD))) {
             throw new ParseException(Constants.ERROR_EXPECTED_PERIOD_IN_FUNCTION);
         }
         
-        return new LambdaFunction(parseLambdaName(tokens, index), parseExpression(tokens, index + 2));
+        index.value += 2;
+        return new LambdaFunction(parseLambdaName(tokens, index), parseExpression(tokens, index));
     }
     
-    private static LambdaName parseLambdaName(String[] tokens, int index) throws ParseException {
-        String termName = tokens[index];
+    private static LambdaName parseLambdaName(String[] tokens, IntRef index) throws ParseException {
+        String termName = tokens[index.value];
         if (!isValidIdentifierName(termName)) {
             throw new ParseException(Constants.ERROR_INVALID_IDENTIFIER_NAME + termName);
         }        

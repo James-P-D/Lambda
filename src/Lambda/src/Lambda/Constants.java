@@ -50,6 +50,7 @@ public class Constants {
     public static final String ERROR                                = "ERROR";
     public static final String LOADING_FILE                         = "LOADING FILE";
     public static final String TERMS_PARSED                         = " terms parsed";
+    public static final String EXPRESSIONS_PARSED                   = " expressions parsed";
     public static final String HELP                                 = "HELP";
     public static final String TERMS                                = "TERMS";
     public static final String TERMS_MESSAGE                        = " terms found";
@@ -68,9 +69,12 @@ public class Constants {
     public static final String ERROR_MUST_PROVIDE_ATLEAST_TWO_TERMS = "Must provide at least two terms";
     public static final String ERROR_READING_FROM_STDIN             = "Unable to read from from stdin";
     public static final String ERROR_PARSE_EXCEPTION                = "Parse exception";
+    public static final String ERROR_PARSE_EXCEPTION_ON_LINE        = "Parse exception on line ";
     public static final String ERROR_INVALID_IDENTIFIER_NAME        = "Invalid name: ";
     public static final String ERROR_BADLY_FORMATTED_FUNCTION       = "Badly formatted function";
     public static final String ERROR_EXPECTED_PERIOD_IN_FUNCTION    = "Expected period in function";
+    public static final String ERROR_UNBALANCED_PARENTHESES         = "Unbalanced parentheses";
+    public static final String ERROR_NOTHING_TO_PARSE               = "Nothing to parse";    
         
     public static final String WARNING_TERM_ALREADY_DEFINED         = "Term already defined: ";
     

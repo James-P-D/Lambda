@@ -4,6 +4,7 @@ public class LambdaName extends LambdaExpression {
     private String name;
     
     public LambdaName(String name) {
+        
         this.name = name;
     }
     
