@@ -14,8 +14,8 @@ import com.sun.jna.platform.win32.WinNT.HANDLE;
 
 public class Console {
 
-    //private static boolean FANCY_UI = true;
-    private static boolean FANCY_UI = false;
+    private static boolean FANCY_UI = true;
+    //private static boolean FANCY_UI = false;
     
     enum Color {
         //Color end string, color reset
@@ -173,7 +173,7 @@ public class Console {
             char[] buffer = message.toCharArray();
             IntByReference lpNumberOfCharsWritten = new IntByReference();
             successful = INSTANCE.WriteConsoleW(handle, buffer, buffer.length, lpNumberOfCharsWritten, null);
-            if(newLine && successful){
+            if (newLine && successful) {
                 System.out.println();
             }
             System.out.print(Color.RESET);                

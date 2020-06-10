@@ -266,9 +266,10 @@ public class Main {
         IntRef tempIndex = new IntRef(index.value);
         
         tempIndex.value++;
-        while (index.value < (tokens.length - 1)) {
+        while (tempIndex.value < (tokens.length - 1)) {
             String token = tokens[tempIndex.value];
-            if(!((token.equals(Constants.OPEN_PARENTHESES)) || ((token.equals(Constants.CLOSE_PARENTHESES))))) {
+            if ((!token.equals(Character.toString(Constants.OPEN_PARENTHESES))) && 
+                (!token.equals(Character.toString(Constants.CLOSE_PARENTHESES)))) {
                 return true;
             }
             tempIndex.value++;
@@ -279,6 +280,7 @@ public class Main {
     
     private static LambdaExpression parseExpression(String[] tokens, IntRef index) throws ParseException {
         String token = tokens[index.value];
+        //System.out.println(token);
         if ((token.equals(Character.toString(Constants.LAMBDA))) || (token.equals(Character.toString(Constants.LAMBDA_SUBSTITUTE)))) {
             index.value++;
             return parseLambdaFunction(tokens, index);
