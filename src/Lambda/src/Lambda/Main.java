@@ -262,6 +262,21 @@ public class Main {
         return termName;
     }
     
+    private static boolean hasNextExpression(String[] tokens, IntRef index) {
+        IntRef tempIndex = new IntRef(index.value);
+        
+        tempIndex.value++;
+        while (index.value < (tokens.length - 1)) {
+            String token = tokens[tempIndex.value];
+            if(!((token.equals(Constants.OPEN_PARENTHESES)) || ((token.equals(Constants.CLOSE_PARENTHESES))))) {
+                return true;
+            }
+            tempIndex.value++;
+        }
+        
+        return false;
+    }
+    
     private static LambdaExpression parseExpression(String[] tokens, IntRef index) throws ParseException {
         String token = tokens[index.value];
         if ((token.equals(Character.toString(Constants.LAMBDA))) || (token.equals(Character.toString(Constants.LAMBDA_SUBSTITUTE)))) {
@@ -305,32 +320,36 @@ public class Main {
                 
             return rootExpression;            
         } else {
-            LambdaExpression rootExpression = null;
-            LambdaExpression firstExpression = null;
+            if (hasNextExpression(tokens, index)) {
+                LambdaExpression rootExpression = null;
+                LambdaExpression firstExpression = parseLambdaName(tokens, index);
+                index.value++;
                 
-            do {                                            
-                LambdaExpression exp = parseExpression(tokens, index);
-                if (firstExpression == null) {
-                    firstExpression = exp;
-                } else {
-                    if (rootExpression == null) {
-                        rootExpression = new LambdaApplication(firstExpression, exp);
+                do {
+                    LambdaExpression exp = parseExpression(tokens, index);
+                    if (firstExpression == null) {
                         firstExpression = exp;
                     } else {
-                        firstExpression = new LambdaApplication(firstExpression, exp);
-                        firstExpression = exp;
+                        if (rootExpression == null) {
+                            rootExpression = new LambdaApplication(firstExpression, exp);
+                            firstExpression = exp;
+                        } else {
+                            firstExpression = new LambdaApplication(firstExpression, exp);
+                            firstExpression = exp;
+                        }                            
                     }
-                }
-
-                index.value++;
-                if(index.value == tokens.length) {
-                    throw new ParseException(Constants.ERROR_UNBALANCED_PARENTHESES);
-                }
+                    
+                    index.value++;
+                    if(index.value > (tokens.length - 1)) {
+                        break;
+                    }
+                    token = tokens[index.value];
+                } while (!token.equals(Character.toString(Constants.CLOSE_PARENTHESES)));
                 
-                token = tokens[index.value];
-            } while (!token.equals(Character.toString(Constants.CLOSE_PARENTHESES)));
-            
-            return rootExpression;
+                return rootExpression;
+            } else {
+                return parseLambdaName(tokens, index);
+            }
         }
     }
     
