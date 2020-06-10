@@ -337,20 +337,24 @@ public class Main {
         if (tokens.length < (index.value + 3)) {
             throw new ParseException(Constants.ERROR_BADLY_FORMATTED_FUNCTION);
         }
-        if (!tokens[index.value + 1].equals(Character.toString(Constants.PERIOD))) {
+
+        LambdaName name = parseLambdaName(tokens, index);
+
+        index.value++;
+        if (!tokens[index.value].equals(Character.toString(Constants.PERIOD))) {
             throw new ParseException(Constants.ERROR_EXPECTED_PERIOD_IN_FUNCTION);
         }
-        
-        index.value += 2;
-        return new LambdaFunction(parseLambdaName(tokens, index), parseExpression(tokens, index));
+                
+        index.value++;
+        return new LambdaFunction(name, parseExpression(tokens, index));
     }
     
     private static LambdaName parseLambdaName(String[] tokens, IntRef index) throws ParseException {
-        String termName = tokens[index.value];
-        if (!isValidIdentifierName(termName)) {
-            throw new ParseException(Constants.ERROR_INVALID_IDENTIFIER_NAME + termName);
+        String name = tokens[index.value];
+        if (!isValidIdentifierName(name)) {
+            throw new ParseException(Constants.ERROR_INVALID_IDENTIFIER_NAME + name);
         }        
 
-        return new LambdaName(termName);
+        return new LambdaName(name);
     }
 }
