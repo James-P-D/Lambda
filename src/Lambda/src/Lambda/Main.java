@@ -321,30 +321,10 @@ public class Main {
             return rootExpression;            
         } else {
             if (hasNextExpression(tokens, index)) {
-                LambdaExpression rootExpression = null;
                 LambdaExpression firstExpression = parseLambdaName(tokens, index);
                 index.value++;
                 
-                do {
-                    LambdaExpression exp = parseExpression(tokens, index);
-                    if (firstExpression == null) {
-                        firstExpression = exp;
-                    } else {
-                        if (rootExpression == null) {
-                            rootExpression = new LambdaApplication(firstExpression, exp);
-                            firstExpression = exp;
-                        } else {
-                            firstExpression = new LambdaApplication(firstExpression, exp);
-                            firstExpression = exp;
-                        }                            
-                    }
-                    
-                    index.value++;
-                    if(index.value > (tokens.length - 1)) {
-                        break;
-                    }
-                    token = tokens[index.value];
-                } while (!token.equals(Character.toString(Constants.CLOSE_PARENTHESES)));
+                LambdaApplication rootExpression = new LambdaApplication(firstExpression, parseExpression(tokens, index)); 
                 
                 return rootExpression;
             } else {
