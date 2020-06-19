@@ -14,6 +14,14 @@ public class Constants {
     public static final Console.Color LAMBDA_COLOR                   = Console.Color.YELLOW_BOLD;
     public static final Console.Color OPERATOR_COLOR                 = Console.Color.GREEN;
     public static final Console.Color IDENTIFIER_COLOR               = Console.Color.WHITE_BOLD;
+    public static final Console.Color INFO_COLOR_1                   = Console.Color.CYAN;
+    public static final Console.Color INFO_COLOR_2                   = Console.Color.CYAN_BRIGHT;
+    public static final Console.Color WARNING_COLOR_1                = Console.Color.YELLOW;
+    public static final Console.Color WARNING_COLOR_2                = Console.Color.YELLOW_BRIGHT;
+    public static final Console.Color ERROR_COLOR_1                  = Console.Color.RED;
+    public static final Console.Color ERROR_COLOR_2                  = Console.Color.RED_BRIGHT;
+    public static final Console.Color DEBUG_COLOR_1                  = Console.Color.MAGENTA;
+    public static final Console.Color DEBUG_COLOR_2                  = Console.Color.MAGENTA_BRIGHT;
     
     public static final int CHAR_CODE_ENTER                          = 13;
     public static final int CHAR_CODE_MIN_VALID                      = 0;
@@ -53,7 +61,7 @@ public class Constants {
     public static final String HELP                                  = "HELP";
     public static final String TERMS                                 = "TERMS";
     public static final String TERMS_MESSAGE                         = "%d term(s) found";
-    public static final String HELP_INFO_1                           = "blah blah blah";
+    public static final String HELP_INFO_1                           = "Help information";
     public static final String HELP_INFO_2                           = "Commands: help            - this screen";
     public static final String HELP_INFO_3                           = "          terms           - display all known terms";
     public static final String HELP_INFO_4                           = "          debug           - toggle debug mode";
@@ -64,9 +72,10 @@ public class Constants {
     public static final String LAMBDA_CALCULUS_INFO                  = "Type 'help' for more information";
     
     public static final String ERRORS_FOUND                          = " error found";
+    public static final String ERROR_FILE_DOES_NOT_EXIST             = "File '%s' does not exist";
     public static final String ERROR_UNABLE_OPEN_FILE                = "Unable to read from file: %s";
     public static final String ERROR_MUST_PROVIDE_AT_LEAST_TWO_TERMS = "Must provide at least two terms";
-    public static final String ERROR_READING_FROM_STDIN              = "Unable to read from from stdin";
+    public static final String ERROR_READING_FROM_STDIN              = "Unable to read from stdin";
     public static final String ERROR_PARSE_EXCEPTION                 = "Parse exception";
     public static final String ERROR_PARSE_EXCEPTION_ON_LINE         = "Parse exception on line %d";
     public static final String ERROR_INVALID_IDENTIFIER_NAME         = "Invalid name: %s";
@@ -76,6 +85,7 @@ public class Constants {
     public static final String ERROR_NOTHING_TO_PARSE                = "Nothing to parse";    
         
     public static final String WARNING_TERM_ALREADY_DEFINED          = "Term already defined: %s";
+    public static final String WARNING_FILE_CONTAINS_NOTHING         = "File '%s' contains no terms or expressions";
     
     public static final ArrayList<String> allCommands                = new ArrayList<String>() {{
             add("QUIT_COMMAND");
@@ -88,6 +98,5 @@ public class Constants {
             add("LOAD_COMMAND");
         }
         private static final long serialVersionUID = -3995135037673286855L;
-    };
-    
+    };    
 }

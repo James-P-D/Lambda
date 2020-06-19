@@ -20,7 +20,10 @@ import java.util.Map;
  * Check case of input (for both terms and commands)
 
  * Use alpha-equivalence to check if final value matches an existing term
+ 
+ * Warn on terms with same alpha-equivalence?
 
+ * Search for TODOs!
  */
 
 public class Main {
@@ -29,14 +32,12 @@ public class Main {
     
     public static void main(String[] args) {   
         terms = new HashMap<String, LambdaExpression>();
-        
+        boolean debugMode = false;
         parseArguments(args);
 
         displayInfo(Constants.LAMBDA_CALCULUS, Constants.LAMBDA_CALCULUS_INFO);
 
         String input = "";
-        boolean debugMode = false;
-
         do {            
             Console.print(Constants.LAMBDA + Constants.PROMPT,  Constants.PROMPT_COLOR);        
             try {
@@ -53,6 +54,11 @@ public class Main {
                     Console.print(Constants.ALPHA + Integer.toString(alphaCount) + Constants.PROMPT, Constants.PROMPT_COLOR);
                     try {
                         input = Console.readInput().trim();
+                        // Just incase user tries to quit from alpha-equivalence loop..
+                        if ((input.equals(Constants.QUIT_COMMAND)) || (input.equals(Constants.EXIT_COMMAND))) {
+                            displayInfo(Constants.QUITTING, Constants.QUIT_MESSAGE);
+                            return;
+                        }
                     } catch (IOException e) {
                         displayError(Constants.ERROR_READING_FROM_STDIN, e);
                         continue;
@@ -91,9 +97,13 @@ public class Main {
                     if (tokens.length > 0) {
                         if (isTermDeclaration(tokens)) {
                             String termName = parseTermDeclaration(tokens);
+                            Console.print(Constants.BETA + Constants.PROMPT,  Constants.PROMPT_COLOR);
+                            // TODO: Update to color!
                             System.out.println("TERM: "+ termName + " " + terms.get(termName).OutputString());
                         } else {
                             LambdaExpression expression = parseExpression(tokens, new IntRef(0));
+                            Console.print(Constants.BETA + Constants.PROMPT,  Constants.PROMPT_COLOR);
+                            // TODO: Update to color!
                             System.out.println("EXPRESION: " + expression.OutputString());
                         }
                     }
@@ -121,13 +131,13 @@ public class Main {
     }
     
     private static void displayWarning(String message) {
-        Console.print(Constants.WARNING + ": ", Console.Color.YELLOW);
-        Console.println(message, Console.Color.YELLOW_BRIGHT);                
+        Console.print(Constants.WARNING + ": ", Constants.WARNING_COLOR_1);
+        Console.println(message, Constants.WARNING_COLOR_2);                
     }
     
     private static void displayError(String message){
-        Console.print(Constants.ERROR + ": ", Console.Color.RED);
-        Console.println(message, Console.Color.RED_BRIGHT);                
+        Console.print(Constants.ERROR + ": ", Constants.ERROR_COLOR_1);
+        Console.println(message, Constants.ERROR_COLOR_2);                
     }
 
     private static void displayError(String message, Exception e) {
@@ -140,16 +150,15 @@ public class Main {
         displayError(line);
         displayError(e.getMessage());                
     }
-
     
     private static void displayInfo(String label, String message){
-        Console.print(label + ": ", Console.Color.BLUE);
-        Console.println(message, Console.Color.BLUE_BRIGHT);
+        Console.print(label + ": ", Constants.INFO_COLOR_1);
+        Console.println(message, Constants.INFO_COLOR_2);
     }
     
     private static void displayDebug(String message){
-        Console.print(Constants.DEBUG + ": ", Console.Color.MAGENTA);
-        Console.println(message, Console.Color.MAGENTA_BRIGHT);
+        Console.print(Constants.DEBUG + ": ", Constants.DEBUG_COLOR_1);
+        Console.println(message, Constants.DEBUG_COLOR_2);
     }    
 
     private static void parseArguments(String[] args) {        
@@ -168,6 +177,10 @@ public class Main {
         displayInfo(Constants.LOADING_FILE, filename);
         try {
             File file = new File(filename);
+            if (!file.exists()) {
+                displayError(String.format(Constants.ERROR_FILE_DOES_NOT_EXIST, filename));
+                return;
+            }
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF8"));
             String line;
             
@@ -194,7 +207,11 @@ public class Main {
                 }
             }
             bufferedReader.close();
-            displayInfo(Constants.LOADING_FILE, String.format(Constants.TERMS_AND_EXPRESSIONS_PARSED, termsParsed, expressionsParsed));
+            if ((termsParsed == 0) && (expressionsParsed == 0)) {
+                displayWarning(String.format(Constants.WARNING_FILE_CONTAINS_NOTHING, filename));
+            } else {
+                displayInfo(Constants.LOADING_FILE, String.format(Constants.TERMS_AND_EXPRESSIONS_PARSED, termsParsed, expressionsParsed));
+            }
             if (errors > 0) {
                 displayError(String.format(Constants.ERRORS_FOUND, errors));
             }
