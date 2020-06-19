@@ -29,10 +29,10 @@ import java.util.Map;
 public class Main {
 
     private static Map<String, LambdaExpression> terms;
+    private static boolean debugMode = false;
     
     public static void main(String[] args) {   
         terms = new HashMap<String, LambdaExpression>();
-        boolean debugMode = false;
         parseArguments(args);
 
         DisplayMessage.Info(Constants.LAMBDA_CALCULUS, Constants.LAMBDA_CALCULUS_INFO);
@@ -51,24 +51,38 @@ public class Main {
                 DisplayMessage.Info(Constants.ALPHA_EQUIVALENCE, Constants.ALPHA_EQUIVALENCE_INFO);
                 ArrayList<String> alphas = new ArrayList<String>();
                 int alphaCount = 1;
+                boolean commandReceived = false;
                 do {
+                    commandReceived = false;
                     Console.print(Constants.ALPHA + Integer.toString(alphaCount) + Constants.PROMPT, Constants.PROMPT_COLOR);
                     try {
                         input = Console.readInput().trim();
                         // Just incase user tries to quit from alpha-equivalence loop..
                         if ((input.equals(Constants.QUIT_COMMAND)) || (input.equals(Constants.EXIT_COMMAND))) {
-                            break;                        
+                            break;
+                        } else if (input.equals(Constants.DEBUG_COMMAND)) {
+                            commandReceived = true;
+                            debugCommand();
+                        } else if (input.equals(Constants.TERMS_COMMAND)) {
+                            commandReceived = true;
+                            termsCommand();
+                        } else if (input.equals(Constants.HELP_COMMAND)) {
+                            commandReceived = true;
+                            helpCommand();
+                        } else if (input.startsWith(Constants.LOAD_COMMAND)) {
+                            commandReceived = true;
+                            loadCommand(input.replace(Constants.LOAD_COMMAND, "").trim());
                         }
                     } catch (IOException e) {
                         DisplayMessage.Error(Constants.ERROR_READING_FROM_STDIN, e);
                         continue;
                     }
-                    if (!input.equals("")) {
+                    if ((!input.equals("")) && (!commandReceived)) {
                         alphas.add(input);
                         alphaCount++;
                     }
                 } while (!input.equals(""));
-                if ((!input.equals(Constants.QUIT_COMMAND)) && (!input.equals(Constants.EXIT_COMMAND))) {
+                if (!((input.equals(Constants.QUIT_COMMAND)) || (input.equals(Constants.EXIT_COMMAND)))) {
                     if (alphas.size() < 2) {
                         DisplayMessage.Error(Constants.ERROR_MUST_PROVIDE_AT_LEAST_TWO_TERMS);
                     } else {
@@ -78,20 +92,13 @@ public class Main {
                     }
                 }
             } else if (input.equals(Constants.DEBUG_COMMAND)) {
-                debugMode = !debugMode;
-                DisplayMessage.Debug(String.format(Constants.DEBUG_MODE, debugMode ? Constants.ON : Constants.OFF));
+                debugCommand();
             } else if (input.equals(Constants.TERMS_COMMAND)) {
-                displayAllTerms();
+                termsCommand();
             } else if (input.equals(Constants.HELP_COMMAND)) {
-                DisplayMessage.Info(Constants.HELP, Constants.HELP_INFO_1); 
-                DisplayMessage.Info(Constants.HELP, Constants.HELP_INFO_2); 
-                DisplayMessage.Info(Constants.HELP, Constants.HELP_INFO_3); 
-                DisplayMessage.Info(Constants.HELP, Constants.HELP_INFO_4); 
-                DisplayMessage.Info(Constants.HELP, Constants.HELP_INFO_5); 
-                DisplayMessage.Info(Constants.HELP, Constants.HELP_INFO_6); 
+                helpCommand();
             } else if (input.startsWith(Constants.LOAD_COMMAND)) {
-                String filename = input.replace(Constants.LOAD_COMMAND, "").trim();
-                loadFile(filename);
+                loadCommand(input.replace(Constants.LOAD_COMMAND, "").trim());
             } else {
                 try {
                     String[] tokens = Tokeniser.Tokenise(input);
@@ -116,30 +123,21 @@ public class Main {
         DisplayMessage.Info(Constants.QUITTING, Constants.QUIT_MESSAGE);
     }
 
-    private static void displayAllTerms() {
-        int termsFound = 0;
-        for(Map.Entry<String, LambdaExpression> term : terms.entrySet()) {
-            String termName = term.getKey();
-            LambdaExpression termExpression = term.getValue();
-            Console.outputToken(termName);
-            Console.outputToken(Character.toString(Constants.SPACE));
-            Console.outputToken(Character.toString(Constants.EQUALS));
-            Console.outputToken(Character.toString(Constants.SPACE));
-            Console.outputToken(termExpression.OutputString());
-            Console.println();
-            termsFound++;
-        }
-        DisplayMessage.Info(Constants.TERMS, String.format(Constants.TERMS_MESSAGE, termsFound));
+    private static void debugCommand() {
+        debugMode = !debugMode;
+        DisplayMessage.Debug(String.format(Constants.DEBUG_MODE, debugMode ? Constants.ON : Constants.OFF));        
     }
     
-    private static void parseArguments(String[] args) {        
-        for (int i = 0; i < args.length; i++){
-            String filename = args[i];
-            loadFile(filename);
-        }
+    private static void helpCommand() {
+        DisplayMessage.Info(Constants.HELP, Constants.HELP_INFO_1); 
+        DisplayMessage.Info(Constants.HELP, Constants.HELP_INFO_2); 
+        DisplayMessage.Info(Constants.HELP, Constants.HELP_INFO_3); 
+        DisplayMessage.Info(Constants.HELP, Constants.HELP_INFO_4); 
+        DisplayMessage.Info(Constants.HELP, Constants.HELP_INFO_5); 
+        DisplayMessage.Info(Constants.HELP, Constants.HELP_INFO_6);         
     }
 
-    private static void loadFile(String filename){
+    private static void loadCommand(String filename) {
         int termsParsed = 0;
         int expressionsParsed = 0;        
         int errors = 0;
@@ -190,6 +188,30 @@ public class Main {
             DisplayMessage.Error(String.format(Constants.ERROR_UNABLE_OPEN_FILE, filename), e);
         }
     }
+
+    private static void termsCommand() {
+        int termsFound = 0;
+        for(Map.Entry<String, LambdaExpression> term : terms.entrySet()) {
+            String termName = term.getKey();
+            LambdaExpression termExpression = term.getValue();
+            Console.outputToken(termName);
+            Console.outputToken(Character.toString(Constants.SPACE));
+            Console.outputToken(Character.toString(Constants.EQUALS));
+            Console.outputToken(Character.toString(Constants.SPACE));
+            Console.outputToken(termExpression.OutputString());
+            Console.println();
+            termsFound++;
+        }
+        DisplayMessage.Info(Constants.TERMS, String.format(Constants.TERMS_MESSAGE, termsFound));
+    }
+    
+    private static void parseArguments(String[] args) {        
+        for (int i = 0; i < args.length; i++){
+            String filename = args[i];
+            loadCommand(filename);
+        }
+    }
+
   /*  
     private static void parseAndOutput(String input){
         Console.print(Constants.LAMBDA + Constants.PROMPT, Constants.PROMPT_COLOR);
