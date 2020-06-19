@@ -63,7 +63,7 @@ public class Main {
                     }
                 } while (!input.equals(""));
                 if (alphas.size() < 2) {
-                    displayError(Constants.ERROR_MUST_PROVIDE_ATLEAST_TWO_TERMS);
+                    displayError(Constants.ERROR_MUST_PROVIDE_AT_LEAST_TWO_TERMS);
                 } else {
                     Console.print(Constants.ALPHA + Constants.PROMPT, Constants.PROMPT_COLOR);
                     Console.println();
@@ -117,7 +117,7 @@ public class Main {
             Console.println();
             termsFound++;
         }
-        displayInfo(Constants.TERMS, Integer.toString(termsFound) + Constants.TERMS_MESSAGE);
+        displayInfo(Constants.TERMS, String.format(Constants.TERMS_MESSAGE, termsFound));
     }
     
     private static void displayWarning(String message) {
@@ -189,18 +189,17 @@ public class Main {
                         }
                     }
                 } catch (ParseException e) {
-                    displayError(Constants.ERROR_PARSE_EXCEPTION_ON_LINE + lineNumber, line, e);
+                    displayError(String.format(Constants.ERROR_PARSE_EXCEPTION_ON_LINE, lineNumber), line, e);
                     errors++;
                 }
             }
             bufferedReader.close();
-            displayInfo(Constants.LOADING_FILE, Integer.toString(termsParsed) + Constants.TERMS_PARSED);
-            displayInfo(Constants.LOADING_FILE, Integer.toString(expressionsParsed) + Constants.EXPRESSIONS_PARSED);
+            displayInfo(Constants.LOADING_FILE, String.format(Constants.TERMS_AND_EXPRESSIONS_PARSED, termsParsed, expressionsParsed));
             if (errors > 0) {
-                displayError(Integer.toString(errors) + Constants.ERRORS_FOUND);
+                displayError(String.format(Constants.ERRORS_FOUND, errors));
             }
         } catch (IOException e) {
-            displayError(Constants.ERROR_UNABLE_OPEN_FILE + filename, e);
+            displayError(String.format(Constants.ERROR_UNABLE_OPEN_FILE, filename), e);
         }
     }
     
@@ -250,11 +249,11 @@ public class Main {
     private static String parseTermDeclaration(String[] tokens) throws ParseException {
         String termName = tokens[0];
         if (!isValidIdentifierName(termName)) {
-            throw new ParseException(Constants.ERROR_INVALID_IDENTIFIER_NAME + termName);
+            throw new ParseException(String.format(Constants.ERROR_INVALID_IDENTIFIER_NAME, termName));
         }
         
         if (termAlreadyExists(termName)) {
-            displayWarning(Constants.WARNING_TERM_ALREADY_DEFINED + termName);
+            displayWarning(String.format(Constants.WARNING_TERM_ALREADY_DEFINED, termName));
         }
         
         LambdaExpression expression = parseExpression(tokens, new IntRef(2));
@@ -354,7 +353,7 @@ public class Main {
     private static LambdaName parseLambdaName(String[] tokens, IntRef index) throws ParseException {
         String name = tokens[index.value];
         if (!isValidIdentifierName(name)) {
-            throw new ParseException(Constants.ERROR_INVALID_IDENTIFIER_NAME + name);
+            throw new ParseException(String.format(Constants.ERROR_INVALID_IDENTIFIER_NAME, name));
         }        
 
         return new LambdaName(name);
