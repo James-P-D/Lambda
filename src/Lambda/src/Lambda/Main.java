@@ -56,8 +56,7 @@ public class Main {
                         input = Console.readInput().trim();
                         // Just incase user tries to quit from alpha-equivalence loop..
                         if ((input.equals(Constants.QUIT_COMMAND)) || (input.equals(Constants.EXIT_COMMAND))) {
-                            displayInfo(Constants.QUITTING, Constants.QUIT_MESSAGE);
-                            return;
+                            break;                        
                         }
                     } catch (IOException e) {
                         displayError(Constants.ERROR_READING_FROM_STDIN, e);
@@ -68,15 +67,18 @@ public class Main {
                         alphaCount++;
                     }
                 } while (!input.equals(""));
-                if (alphas.size() < 2) {
-                    displayError(Constants.ERROR_MUST_PROVIDE_AT_LEAST_TWO_TERMS);
-                } else {
-                    Console.print(Constants.ALPHA + Constants.PROMPT, Constants.PROMPT_COLOR);
-                    Console.println();
+                if ((!input.equals(Constants.QUIT_COMMAND)) && (!input.equals(Constants.EXIT_COMMAND))) {
+                    if (alphas.size() < 2) {
+                        displayError(Constants.ERROR_MUST_PROVIDE_AT_LEAST_TWO_TERMS);
+                    } else {
+                        Console.print(Constants.ALPHA + Constants.PROMPT, Constants.PROMPT_COLOR);
+                        Console.println();
+                        //TODO: Alpha equivalence here
+                    }
                 }
             } else if (input.equals(Constants.DEBUG_COMMAND)) {
                 debugMode = !debugMode;
-                displayInfo(Constants.DEBUG_MODE, debugMode ? Constants.ON : Constants.OFF);
+                displayDebug(String.format(Constants.DEBUG_MODE, debugMode ? Constants.ON : Constants.OFF));
             } else if (input.equals(Constants.TERMS_COMMAND)) {
                 displayAllTerms();
             } else if (input.equals(Constants.HELP_COMMAND)) {
@@ -89,8 +91,6 @@ public class Main {
             } else if (input.startsWith(Constants.LOAD_COMMAND)) {
                 String filename = input.replace(Constants.LOAD_COMMAND, "").trim();
                 loadFile(filename);
-            } else if ((input.equals(Constants.QUIT_COMMAND)) || (input.equals(Constants.EXIT_COMMAND))) {
-                displayInfo(Constants.QUITTING, Constants.QUIT_MESSAGE);
             } else {
                 try {
                     String[] tokens = Tokeniser.Tokenise(input);
@@ -112,6 +112,7 @@ public class Main {
                 }
             }
         } while ((!input.equals(Constants.QUIT_COMMAND)) && (!input.equals(Constants.EXIT_COMMAND)));
+        displayInfo(Constants.QUITTING, Constants.QUIT_MESSAGE);
     }
 
     private static void displayAllTerms() {

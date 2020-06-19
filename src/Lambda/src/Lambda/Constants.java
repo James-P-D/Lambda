@@ -48,9 +48,9 @@ public class Constants {
     public static final String LOAD_COMMAND                          = "load";
     
     public static final String PROMPT                                = "> ";
-    public static final String ON                                    = "On";
-    public static final String OFF                                   = "Off";
-    public static final String DEBUG_MODE                            = "DEBUG MODE";
+    public static final String ON                                    = "ON";
+    public static final String OFF                                   = "OFF";
+    public static final String DEBUG_MODE                            = "Debug mode %s";
     public static final String QUITTING                              = "QUITTING";
     public static final String QUIT_MESSAGE                          = "Bye!";
     public static final String DEBUG                                 = "DEBUG";
@@ -71,7 +71,7 @@ public class Constants {
     public static final String LAMBDA_CALCULUS                       = LAMBDA + "-CALCULUS";
     public static final String LAMBDA_CALCULUS_INFO                  = "Type 'help' for more information";
     
-    public static final String ERRORS_FOUND                          = " error found";
+    public static final String ERRORS_FOUND                          = "%d error found";
     public static final String ERROR_FILE_DOES_NOT_EXIST             = "File '%s' does not exist";
     public static final String ERROR_UNABLE_OPEN_FILE                = "Unable to read from file: %s";
     public static final String ERROR_MUST_PROVIDE_AT_LEAST_TWO_TERMS = "Must provide at least two terms";
