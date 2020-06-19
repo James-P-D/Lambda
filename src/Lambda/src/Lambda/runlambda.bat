@@ -14,5 +14,5 @@ rem javac -cp ..\..\libs\jna-5.5.0.jar;..\..\libs\jna-platform-5.5.0.jar;. Conso
 rem javac -encoding utf8 Tokeniser.java
 rem javac -cp ;. -encoding utf8 Main.java
 
-javac -cp ..\..\libs\jna-5.5.0.jar;..\..\libs\jna-platform-5.5.0.jar;. Constants.java Console.java Tokeniser.java RawConsoleInput.java LambdaExpression.java LambdaName.java LambdaFunction.java LambdaApplication.java ParseException.java IntRef.java Main.java
+javac -cp ..\..\libs\jna-5.5.0.jar;..\..\libs\jna-platform-5.5.0.jar;. Constants.java Console.java Tokeniser.java Parser.java DisplayMessage.java RawConsoleInput.java LambdaExpression.java LambdaName.java LambdaFunction.java LambdaApplication.java ParseException.java IntRef.java Main.java
 java -Xss4m -classpath "C:\Users\jdorr\Desktop\Dev\Lambda\src\Lambda\bin;..\..\libs\jna-5.5.0.jar;..\..\libs\jna-platform-5.5.0.jar" Lambda.Main C:\Users\jdorr\Desktop\Dev\Lambda\src\Lambda\src\Lambda\definitions.lbd
