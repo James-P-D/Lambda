@@ -215,13 +215,13 @@ public class Console {
                     (charCode != Constants.CHAR_CODE_TAB)) {
                     // If <ESC> pressed..
                     if (charCode == Constants.CHAR_CODE_ESC) {
-                        print("\n");
+                        println();
                         return Constants.QUIT_COMMAND;
-                    } else if (charCode == Constants.CHAR_CODE_BACKSPACE) { // If <BACKSPACE> pressed
-                        if (input.length() > 0) {
-                            print(Character.toString((char)charCode));
-                            print(Character.toString(' '));
-                            print(Character.toString((char)charCode));
+                    } else if (charCode == Constants.CHAR_CODE_BACKSPACE) {                 // If <BACKSPACE> pressed..
+                        if (input.length() > 0) {                                           // ..and input isn't empty yet..
+                            print(Character.toString((char)Constants.CHAR_CODE_BACKSPACE)); // Move cursor back one space
+                            print(Character.toString(' '));                                 // Overwrite whatever was there
+                            print(Character.toString((char)Constants.CHAR_CODE_BACKSPACE)); // And then move cursor back one space again
                             input = input.substring(0, input.length() - 1);
                         }
                     } else {
