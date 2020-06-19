@@ -144,7 +144,6 @@ public class Console {
     public static void println(String message) {
         print_(message, true, Color.RESET, Color.BLACK_BACKGROUND);
     }
-
     
     public static void print(String message, Color fontColor) {
         print_(message, false, fontColor, Color.BLACK_BACKGROUND);
@@ -153,7 +152,6 @@ public class Console {
     public static void println(String message, Color fontColor) {
         print_(message, true, fontColor, Color.BLACK_BACKGROUND);
     }
-
     
     public static void print(String message, Color fontColor, Color backColor) {
         print_(message, false, fontColor, backColor);
@@ -213,7 +211,8 @@ public class Console {
             // While not <ENTER>
             while(charCode != Constants.CHAR_CODE_ENTER) {
                 // If we read a valid character...
-                if ((charCode > Constants.CHAR_CODE_MIN_VALID) && (charCode <= Constants.CHAR_CODE_MAX_VALID)) {
+                if (((charCode >= Constants.CHAR_CODE_MIN_VALID) && (charCode <= Constants.CHAR_CODE_MAX_VALID)) &&
+                    (charCode != Constants.CHAR_CODE_TAB)) {
                     // If <ESC> pressed..
                     if (charCode == Constants.CHAR_CODE_ESC) {
                         print("\n");

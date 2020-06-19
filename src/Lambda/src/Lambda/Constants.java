@@ -23,11 +23,12 @@ public class Constants {
     public static final Console.Color DEBUG_COLOR_1                  = Console.Color.MAGENTA;
     public static final Console.Color DEBUG_COLOR_2                  = Console.Color.MAGENTA_BRIGHT;
     
-    public static final int CHAR_CODE_ENTER                          = 13;
     public static final int CHAR_CODE_MIN_VALID                      = 0;
     public static final int CHAR_CODE_MAX_VALID                      = 122;
     public static final int CHAR_CODE_ESC                            = 27;
     public static final int CHAR_CODE_BACKSPACE                      = 8;
+    public static final int CHAR_CODE_TAB                            = 9;
+    public static final int CHAR_CODE_ENTER                          = 13;
     
     // Greek letters (and substitutes if we can't display)                       // Uppercase  Lowercase   
     public static final char ALPHA                                   = '\u03B1'; // \u0391     \u03B1
@@ -70,6 +71,8 @@ public class Constants {
     public static final String HELP_INFO_7                           = "          exit/quit       - leave the application";
     public static final String LAMBDA_CALCULUS                       = LAMBDA + "-CALCULUS";
     public static final String LAMBDA_CALCULUS_INFO                  = "Type 'help' for more information";
+    public static final String ALPHA_EQUIVALENCE                     = ALPHA + "-EQUIVALENCE";
+    public static final String ALPHA_EQUIVALENCE_INFO                = "Enter a number of expressions, each on a separate line, and then an empty line to begin comparison";
     
     public static final String ERRORS_FOUND                          = "%d error found";
     public static final String ERROR_FILE_DOES_NOT_EXIST             = "File '%s' does not exist";

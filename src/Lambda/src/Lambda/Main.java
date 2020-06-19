@@ -48,6 +48,7 @@ public class Main {
             }
 
             if (input.equals(Constants.ALPHA_COMMAND)) {
+                displayInfo(Constants.ALPHA_EQUIVALENCE, Constants.ALPHA_EQUIVALENCE_INFO);
                 ArrayList<String> alphas = new ArrayList<String>();
                 int alphaCount = 1;
                 do {
@@ -71,9 +72,9 @@ public class Main {
                     if (alphas.size() < 2) {
                         displayError(Constants.ERROR_MUST_PROVIDE_AT_LEAST_TWO_TERMS);
                     } else {
+                        //TODO: Alpha equivalence here
                         Console.print(Constants.ALPHA + Constants.PROMPT, Constants.PROMPT_COLOR);
                         Console.println();
-                        //TODO: Alpha equivalence here
                     }
                 }
             } else if (input.equals(Constants.DEBUG_COMMAND)) {
