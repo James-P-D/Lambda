@@ -69,7 +69,7 @@ public class Constants {
     public static final String WARNING                               = "WARNING";
     public static final String ERROR                                 = "ERROR";
     public static final String LOADING_FILE                          = "LOADING FILE";
-    public static final String TERMS_AND_EXPRESSIONS_PARSED          = "File: %s - %d term(s) and %d expression(s) parsed";
+    public static final String TERMS_AND_EXPRESSIONS_PARSED          = "%s - %d term(s) and %d expression(s) parsed";
     public static final String HELP                                  = "HELP";
     public static final String TERMS                                 = "TERMS";
     public static final String TERMS_MESSAGE                         = "%d term(s) found";
