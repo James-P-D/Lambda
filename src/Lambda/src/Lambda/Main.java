@@ -27,10 +27,13 @@ import java.util.Map;
  */
 
 public class Main {
-    public static void main(String[] args) {   
+    public static void main(String[] args) {
+        // Dictionary mapping term names to their expressions
         Map<String, LambdaExpression> terms = new HashMap<String, LambdaExpression>();
+        
+        // Debug flag
         boolean debugMode = false;
-
+        
         DisplayMessage.Info(Constants.LAMBDA_CALCULUS, Constants.LAMBDA_CALCULUS_INFO);
 
         parseArguments(args, terms);
@@ -41,6 +44,7 @@ public class Main {
             try {
                 input = Console.readInput().toLowerCase().trim();
             } catch (IOException e) {
+                // On any exceptions reading from stdin, repeat loop
                 DisplayMessage.Error(Constants.ERROR_READING_FROM_STDIN, e);
                 continue;
             }
@@ -49,7 +53,7 @@ public class Main {
                 DisplayMessage.Info(Constants.ALPHA_EQUIVALENCE, Constants.ALPHA_EQUIVALENCE_INFO);
                 ArrayList<String> alphas = new ArrayList<String>();
                 int alphaCount = 1;
-                boolean commandReceived = false;
+                boolean commandReceived;
                 do {
                     commandReceived = false;
                     Console.print(Constants.ALPHA + Integer.toString(alphaCount) + Constants.PROMPT, Constants.PROMPT_COLOR);
@@ -75,6 +79,8 @@ public class Main {
                         DisplayMessage.Error(Constants.ERROR_READING_FROM_STDIN, e);
                         continue;
                     }
+                    
+                    // Only add the input to the list for comparison if its not an empty string or a command
                     if ((!input.equals("")) && (!commandReceived)) {
                         alphas.add(input);
                         alphaCount++;
@@ -98,6 +104,8 @@ public class Main {
             } else if (input.startsWith(Constants.LOAD_COMMAND)) {
                 loadCommand(input.replace(Constants.LOAD_COMMAND, "").trim(), terms);
             } else {
+                // In all other cases, treat the input as a term
+                // or expresion to be parsed and evaluated
                 try {
                     String[] tokens = Tokeniser.Tokenise(input);
                     if (tokens.length > 0) {
@@ -121,12 +129,14 @@ public class Main {
         DisplayMessage.Info(Constants.QUITTING, Constants.QUIT_MESSAGE);
     }
 
+    // Toggle the debugMode flag and output state to stdout
     private static boolean debugCommand(boolean debugMode) {
         boolean newDebugMode = !debugMode;
         DisplayMessage.Debug(String.format(Constants.DEBUG_MODE, newDebugMode ? Constants.ON : Constants.OFF));
         return newDebugMode;
     }
     
+    // List the commands available
     private static void helpCommand() {
         DisplayMessage.Info(Constants.HELP, Constants.HELP_INFO_1); 
         DisplayMessage.Info(Constants.HELP, Constants.HELP_INFO_2); 
@@ -136,6 +146,7 @@ public class Main {
         DisplayMessage.Info(Constants.HELP, Constants.HELP_INFO_6);         
     }
 
+    // Load a script file
     private static void loadCommand(String filename, Map<String, LambdaExpression> terms) {
         int termsParsed = 0;
         int expressionsParsed = 0;        
@@ -188,6 +199,7 @@ public class Main {
         }
     }
 
+    // Display all terms in dictionary
     private static void termsCommand(Map<String, LambdaExpression> terms) {
         int termsFound = 0;
         for(Map.Entry<String, LambdaExpression> term : terms.entrySet()) {
@@ -204,6 +216,9 @@ public class Main {
         DisplayMessage.Info(Constants.TERMS, String.format(Constants.TERMS_MESSAGE, termsFound));
     }
     
+    // Parse any arguments sent to main()
+    // Each argument will be treated as a path to a script file
+    // which we will parse
     private static void parseArguments(String[] args, Map<String, LambdaExpression> terms) {        
         for (int i = 0; i < args.length; i++){
             String filename = args[i];

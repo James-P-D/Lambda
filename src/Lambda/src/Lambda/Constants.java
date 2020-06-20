@@ -3,6 +3,7 @@ package Lambda;
 import java.util.ArrayList;
 
 public class Constants {
+    // Symbols we will split on
     public static final char COMMENT                                 = '#';
     public static final char PERIOD                                  = '.';
     public static final char EQUALS                                  = '=';
@@ -10,6 +11,7 @@ public class Constants {
     public static final char OPEN_PARENTHESES                        = '(';
     public static final char CLOSE_PARENTHESES                       = ')';
 
+    // Colors for outputting info, warnings, errors etc.
     public static final Console.Color PROMPT_COLOR                   = Console.Color.BLACK_BOLD; 
     public static final Console.Color LAMBDA_COLOR                   = Console.Color.YELLOW_BOLD;
     public static final Console.Color OPERATOR_COLOR                 = Console.Color.GREEN;
@@ -23,6 +25,8 @@ public class Constants {
     public static final Console.Color DEBUG_COLOR_1                  = Console.Color.MAGENTA;
     public static final Console.Color DEBUG_COLOR_2                  = Console.Color.MAGENTA_BRIGHT;
     
+    // Character codes for reading keypresses. Need to handle backspace manually
+    // when running with 'FANCY_UI = true'
     public static final int CHAR_CODE_MIN_VALID                      = 0;
     public static final int CHAR_CODE_MAX_VALID                      = 122;
     public static final int CHAR_CODE_ESC                            = 27;
@@ -32,14 +36,19 @@ public class Constants {
     
     // Greek letters (and substitutes if we can't display)                       // Uppercase  Lowercase   
     public static final char ALPHA                                   = '\u03B1'; // \u0391     \u03B1
+    public static final char ALPHA_UPPER                             = '\u0391';
     public static final char ALPHA_SUBSTITUTE                        = 'A';
     public static final char BETA                                    = '\u03B2'; // \u0392     \u03B2
+    public static final char BETA_UPPER                              = '\u0392';
     public static final char BETA_SUBSTITUTE                         = 'B';
     public static final char ETA                                     = '\u03B7'; // \u0397     \u03B7
+    public static final char ETA_UPPER                               = '\u0397';
     public static final char ETA_SUBSTITUTE                          = 'E';
     public static final char LAMBDA                                  = '\u03BB'; // \u039B     \u03BB    
+    public static final char LAMBDA_UPPER                            = '\u039B';    
     public static final char LAMBDA_SUBSTITUTE                       = '\\';
     
+    // Commands
     public static final String QUIT_COMMAND                          = "quit";
     public static final String EXIT_COMMAND                          = "exit";
     public static final String ALPHA_COMMAND                         = "alpha";
@@ -48,6 +57,7 @@ public class Constants {
     public static final String TERMS_COMMAND                         = "terms";
     public static final String LOAD_COMMAND                          = "load";
     
+    // Output strings
     public static final String PROMPT                                = "> ";
     public static final String ON                                    = "ON";
     public static final String OFF                                   = "OFF";
@@ -74,6 +84,7 @@ public class Constants {
     public static final String ALPHA_EQUIVALENCE                     = ALPHA + "-EQUIVALENCE";
     public static final String ALPHA_EQUIVALENCE_INFO                = "Enter a number of expressions, each on a separate line, and then an empty line to begin comparison";
     
+    // Error messages
     public static final String ERRORS_FOUND                          = "%d error found";
     public static final String ERROR_FILE_DOES_NOT_EXIST             = "File '%s' does not exist";
     public static final String ERROR_UNABLE_OPEN_FILE                = "Unable to read from file: %s";
@@ -86,7 +97,8 @@ public class Constants {
     public static final String ERROR_EXPECTED_PERIOD_IN_FUNCTION     = "Expected period in function";
     public static final String ERROR_UNBALANCED_PARENTHESES          = "Unbalanced parentheses";
     public static final String ERROR_NOTHING_TO_PARSE                = "Nothing to parse";    
-        
+    
+    // Warning messages
     public static final String WARNING_TERM_ALREADY_DEFINED          = "Term already defined: %s";
     public static final String WARNING_FILE_CONTAINS_NOTHING         = "File '%s' contains no terms or expressions";
     
@@ -94,7 +106,6 @@ public class Constants {
             add("QUIT_COMMAND");
             add("EXIT_COMMAND");
             add("ALPHA_COMMAND");
-            add("QUIT_COMMAND");
             add("DEBUG_COMMAND");
             add("HELP_COMMAND");
             add("TERMS_COMMAND");
