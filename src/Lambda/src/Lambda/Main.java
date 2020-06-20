@@ -27,16 +27,14 @@ import java.util.Map;
  */
 
 public class Main {
-
-    private static Map<String, LambdaExpression> terms;
-    private static boolean debugMode = false;
-    
     public static void main(String[] args) {   
-        terms = new HashMap<String, LambdaExpression>();
-        parseArguments(args);
+        Map<String, LambdaExpression> terms = new HashMap<String, LambdaExpression>();
+        boolean debugMode = false;
 
         DisplayMessage.Info(Constants.LAMBDA_CALCULUS, Constants.LAMBDA_CALCULUS_INFO);
 
+        parseArguments(args, terms);
+        
         String input = "";
         do {            
             Console.print(Constants.LAMBDA + Constants.PROMPT,  Constants.PROMPT_COLOR);        
@@ -62,16 +60,16 @@ public class Main {
                             break;
                         } else if (input.equals(Constants.DEBUG_COMMAND)) {
                             commandReceived = true;
-                            debugCommand();
+                            debugMode = debugCommand(debugMode);
                         } else if (input.equals(Constants.TERMS_COMMAND)) {
                             commandReceived = true;
-                            termsCommand();
+                            termsCommand(terms);
                         } else if (input.equals(Constants.HELP_COMMAND)) {
                             commandReceived = true;
                             helpCommand();
                         } else if (input.startsWith(Constants.LOAD_COMMAND)) {
                             commandReceived = true;
-                            loadCommand(input.replace(Constants.LOAD_COMMAND, "").trim());
+                            loadCommand(input.replace(Constants.LOAD_COMMAND, "").trim(), terms);
                         }
                     } catch (IOException e) {
                         DisplayMessage.Error(Constants.ERROR_READING_FROM_STDIN, e);
@@ -92,13 +90,13 @@ public class Main {
                     }
                 }
             } else if (input.equals(Constants.DEBUG_COMMAND)) {
-                debugCommand();
+                debugMode = debugCommand(debugMode);
             } else if (input.equals(Constants.TERMS_COMMAND)) {
-                termsCommand();
+                termsCommand(terms);
             } else if (input.equals(Constants.HELP_COMMAND)) {
                 helpCommand();
             } else if (input.startsWith(Constants.LOAD_COMMAND)) {
-                loadCommand(input.replace(Constants.LOAD_COMMAND, "").trim());
+                loadCommand(input.replace(Constants.LOAD_COMMAND, "").trim(), terms);
             } else {
                 try {
                     String[] tokens = Tokeniser.Tokenise(input);
@@ -123,9 +121,10 @@ public class Main {
         DisplayMessage.Info(Constants.QUITTING, Constants.QUIT_MESSAGE);
     }
 
-    private static void debugCommand() {
-        debugMode = !debugMode;
-        DisplayMessage.Debug(String.format(Constants.DEBUG_MODE, debugMode ? Constants.ON : Constants.OFF));        
+    private static boolean debugCommand(boolean debugMode) {
+        boolean newDebugMode = !debugMode;
+        DisplayMessage.Debug(String.format(Constants.DEBUG_MODE, newDebugMode ? Constants.ON : Constants.OFF));
+        return newDebugMode;
     }
     
     private static void helpCommand() {
@@ -137,7 +136,7 @@ public class Main {
         DisplayMessage.Info(Constants.HELP, Constants.HELP_INFO_6);         
     }
 
-    private static void loadCommand(String filename) {
+    private static void loadCommand(String filename, Map<String, LambdaExpression> terms) {
         int termsParsed = 0;
         int expressionsParsed = 0;        
         int errors = 0;
@@ -189,7 +188,7 @@ public class Main {
         }
     }
 
-    private static void termsCommand() {
+    private static void termsCommand(Map<String, LambdaExpression> terms) {
         int termsFound = 0;
         for(Map.Entry<String, LambdaExpression> term : terms.entrySet()) {
             String termName = term.getKey();
@@ -205,10 +204,10 @@ public class Main {
         DisplayMessage.Info(Constants.TERMS, String.format(Constants.TERMS_MESSAGE, termsFound));
     }
     
-    private static void parseArguments(String[] args) {        
+    private static void parseArguments(String[] args, Map<String, LambdaExpression> terms) {        
         for (int i = 0; i < args.length; i++){
             String filename = args[i];
-            loadCommand(filename);
+            loadCommand(filename, terms);
         }
     }
 
