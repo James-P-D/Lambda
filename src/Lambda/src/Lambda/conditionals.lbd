@@ -1,5 +1,5 @@
-# requires booleans.lbd
-# requires maths.lbd
+# Requires booleans.lbd and maths.lbd to work
+$ booleans.lbd maths.lbd
 
 if_then_else = \p.\x.\y.p x y
 

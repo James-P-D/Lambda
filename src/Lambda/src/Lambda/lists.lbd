@@ -1,4 +1,5 @@
-# Requires boolean.lbd
+# Requires booleans.lbd to work
+$ booleans.lbd 
 
 pair = \a.\b.\f.f a b
 first = \p.p true
