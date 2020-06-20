@@ -1,0 +1,10 @@
+# requires booleans.lbd
+# requires maths.lbd
+
+if_then_else = \p.\x.\y.p x y
+
+less_than_or_equal = \n.\m.is_zero (sub n m)
+less_than = \n.\m.and (less_than_or_equal n m)(not is_zero(n (pred m)))
+equals = \n.\m.and (less_than_or_equal n m) (less_than_or_equal m n)
+greater_than_or_equal = \n.\m.is_zero (n(pred m))
+greater_than = \n.\m.and (less_than_or_equal n m) (not(is_zero(sub n m)))

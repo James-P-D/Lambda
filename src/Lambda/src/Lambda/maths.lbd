@@ -1,0 +1,19 @@
+zero  = \f.\a.a
+one   = \f.\a.f a
+two   = \f.\a.f (f a)
+three = \f.\a.f (f (f a))
+four  = \f.\a.f (f (f (f a)))
+five  = \f.\a.f (f (f (f (f a))))
+six   = \f.\a.f (f (f (f (f (f a)))))
+seven = \f.\a.f (f (f (f (f (f (f a))))))
+eight = \f.\a.f (f (f (f (f (f (f (f a)))))))
+nine  = \f.\a.f (f (f (f (f (f (f (f (f a))))))))
+ten   = \f.\a.f (f (f (f (f (f (f (f (f (f a)))))))))
+
+succ = \n.\f.\a.f (n f a)
+add = \m.\n.\f.\a.m f (n f a)
+mult = \m.\n.\f.m (n f)
+pow = \m.\n.n m
+pred = \n.\f.\a.n (\g.\h.h (g f)) (\u.a) (\u.u)
+sub = \m.\n.n pred m
+is_zero = \n.n (\m.false) true

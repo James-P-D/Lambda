@@ -1,0 +1,11 @@
+# Requires boolean.lbd
+
+pair = \a.\b.\f.f a b
+first = \p.p true
+second = \p.p false
+
+list_element = \x.\xs.pair false (pair x xs)
+empty_list = pair true true
+is_empty = first
+head = \xs.first (second xs)
+tail = λxs.second(second xs)
