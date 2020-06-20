@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 public class Constants {
     // Symbols we will split on
+    public static final char INCLUDE_FILE                            = '$';
     public static final char COMMENT                                 = '#';
     public static final char PERIOD                                  = '.';
     public static final char EQUALS                                  = '=';
@@ -68,7 +69,7 @@ public class Constants {
     public static final String WARNING                               = "WARNING";
     public static final String ERROR                                 = "ERROR";
     public static final String LOADING_FILE                          = "LOADING FILE";
-    public static final String TERMS_AND_EXPRESSIONS_PARSED          = "%d term(s) and %d expression(s) parsed";
+    public static final String TERMS_AND_EXPRESSIONS_PARSED          = "File: %s - %d term(s) and %d expression(s) parsed";
     public static final String HELP                                  = "HELP";
     public static final String TERMS                                 = "TERMS";
     public static final String TERMS_MESSAGE                         = "%d term(s) found";
@@ -85,13 +86,13 @@ public class Constants {
     public static final String ALPHA_EQUIVALENCE_INFO                = "Enter a number of expressions, each on a separate line, and then an empty line to begin comparison";
     
     // Error messages
-    public static final String ERRORS_FOUND                          = "%d error found";
-    public static final String ERROR_FILE_DOES_NOT_EXIST             = "File '%s' does not exist";
-    public static final String ERROR_UNABLE_OPEN_FILE                = "Unable to read from file: %s";
+    public static final String ERRORS_FOUND                          = "%s - %d error found";
+    public static final String ERROR_FILE_DOES_NOT_EXIST             = "%s - Does not exist";
+    public static final String ERROR_UNABLE_OPEN_FILE                = "%s - Unable to read";
+    public static final String ERROR_PARSE_EXCEPTION_ON_LINE         = "%s - Parse exception on line %d";
     public static final String ERROR_MUST_PROVIDE_AT_LEAST_TWO_TERMS = "Must provide at least two terms";
     public static final String ERROR_READING_FROM_STDIN              = "Unable to read from stdin";
     public static final String ERROR_PARSE_EXCEPTION                 = "Parse exception";
-    public static final String ERROR_PARSE_EXCEPTION_ON_LINE         = "Parse exception on line %d";
     public static final String ERROR_INVALID_IDENTIFIER_NAME         = "Invalid name: %s";
     public static final String ERROR_BADLY_FORMATTED_FUNCTION        = "Badly formatted function";
     public static final String ERROR_EXPECTED_PERIOD_IN_FUNCTION     = "Expected period in function";
@@ -100,7 +101,7 @@ public class Constants {
     
     // Warning messages
     public static final String WARNING_TERM_ALREADY_DEFINED          = "Term already defined: %s";
-    public static final String WARNING_FILE_CONTAINS_NOTHING         = "File '%s' contains no terms or expressions";
+    public static final String WARNING_FILE_CONTAINS_NOTHING         = "%s - Contains no terms or expressions";
     
     public static final ArrayList<String> allCommands                = new ArrayList<String>() {{
             add("QUIT_COMMAND");

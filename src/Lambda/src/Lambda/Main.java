@@ -170,18 +170,24 @@ public class Main {
                 try {
                     String[] tokens = Tokeniser.Tokenise(line);
                     if (tokens.length > 0) {
-                        if (Parser.IsTermDeclaration(tokens)) {
-                            String termName = Parser.ParseTermDeclaration(tokens, terms);
-                            System.out.println(terms.get(termName).OutputString());
-                            termsParsed++;
+                        if(tokens[0].equals(Character.toString(Constants.INCLUDE_FILE))){
+                            for (int i = 1; i < tokens.length; i++) {
+                                loadCommand(tokens[i], terms);
+                            }
                         } else {
-                            LambdaExpression expression = Parser.ParseExpression(tokens, new IntRef(0));
-                            System.out.println(expression.OutputString());
-                            expressionsParsed++;
+                            if (Parser.IsTermDeclaration(tokens)) {
+                                String termName = Parser.ParseTermDeclaration(tokens, terms);
+                                System.out.println(terms.get(termName).OutputString());
+                                termsParsed++;
+                            } else {
+                                LambdaExpression expression = Parser.ParseExpression(tokens, new IntRef(0));
+                                System.out.println(expression.OutputString());
+                                expressionsParsed++;
+                            }
                         }
                     }
                 } catch (ParseException e) {
-                    DisplayMessage.Error(String.format(Constants.ERROR_PARSE_EXCEPTION_ON_LINE, lineNumber), line, e);
+                    DisplayMessage.Error(String.format(Constants.ERROR_PARSE_EXCEPTION_ON_LINE, filename, lineNumber), line, e);
                     errors++;
                 }
             }
@@ -189,10 +195,10 @@ public class Main {
             if ((termsParsed == 0) && (expressionsParsed == 0)) {
                 DisplayMessage.Warning(String.format(Constants.WARNING_FILE_CONTAINS_NOTHING, filename));
             } else {
-                DisplayMessage.Info(Constants.LOADING_FILE, String.format(Constants.TERMS_AND_EXPRESSIONS_PARSED, termsParsed, expressionsParsed));
+                DisplayMessage.Info(Constants.LOADING_FILE, String.format(Constants.TERMS_AND_EXPRESSIONS_PARSED, filename, termsParsed, expressionsParsed));
             }
             if (errors > 0) {
-                DisplayMessage.Error(String.format(Constants.ERRORS_FOUND, errors));
+                DisplayMessage.Error(String.format(Constants.ERRORS_FOUND, filename, errors));
             }
         } catch (IOException e) {
             DisplayMessage.Error(String.format(Constants.ERROR_UNABLE_OPEN_FILE, filename), e);
