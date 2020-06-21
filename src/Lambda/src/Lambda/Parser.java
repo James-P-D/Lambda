@@ -36,21 +36,23 @@ public class Parser {
         return ((tokens.length >= 3) && (tokens[1].equals(Character.toString(Constants.EQUALS))));
     }
     
-    public static String ParseTermDeclaration(String[] tokens, Map<String, LambdaExpression> terms) throws ParseException {
+    public static String ParseTermDeclaration(String[] tokens, Map<String, LambdaExpression> terms, boolean warnOnRedefinition) throws ParseException {
         String termName = tokens[0];
         if (!isValidIdentifierName(termName)) {
             throw new ParseException(String.format(Constants.ERROR_INVALID_IDENTIFIER_NAME, termName));
         }
         
-        if (termAlreadyExists(termName, terms)) {
-            DisplayMessage.Warning(String.format(Constants.WARNING_TERM_ALREADY_DEFINED, termName));
+        if (warnOnRedefinition) {
+            if (termAlreadyExists(termName, terms)) {
+                DisplayMessage.Warning(String.format(Constants.WARNING_TERM_ALREADY_DEFINED, termName));
+            }            
         }
         
         LambdaExpression expression = ParseExpression(tokens, new IntRef(2));
         terms.put(termName, expression);
         return termName;
     }
-    
+
     private static boolean hasNextExpression(String[] tokens, IntRef index) {
         IntRef tempIndex = new IntRef(index.value);
         

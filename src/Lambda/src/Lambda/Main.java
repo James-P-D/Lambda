@@ -73,7 +73,7 @@ public class Main {
                             helpCommand();
                         } else if (input.startsWith(Constants.LOAD_COMMAND)) {
                             commandReceived = true;
-                            loadCommand(input.replace(Constants.LOAD_COMMAND, "").trim(), terms);
+                            loadCommand(input.replace(Constants.LOAD_COMMAND, "").trim(), terms, true);
                         }
                     } catch (IOException e) {
                         DisplayMessage.Error(Constants.ERROR_READING_FROM_STDIN, e);
@@ -102,7 +102,7 @@ public class Main {
             } else if (input.equals(Constants.HELP_COMMAND)) {
                 helpCommand();
             } else if (input.startsWith(Constants.LOAD_COMMAND)) {
-                loadCommand(input.replace(Constants.LOAD_COMMAND, "").trim(), terms);
+                loadCommand(input.replace(Constants.LOAD_COMMAND, "").trim(), terms, true);
             } else {
                 // In all other cases, treat the input as a term
                 // or expresion to be parsed and evaluated
@@ -110,7 +110,7 @@ public class Main {
                     String[] tokens = Tokeniser.Tokenise(input);
                     if (tokens.length > 0) {
                         if (Parser.IsTermDeclaration(tokens)) {
-                            String termName = Parser.ParseTermDeclaration(tokens, terms);
+                            String termName = Parser.ParseTermDeclaration(tokens, terms, true);
                             Console.print(Constants.BETA + Constants.PROMPT,  Constants.PROMPT_COLOR);
                             // TODO: Update to color!
                             System.out.println("TERM: "+ termName + " " + terms.get(termName).OutputString());
@@ -147,7 +147,7 @@ public class Main {
     }
 
     // Load a script file
-    private static void loadCommand(String filename, Map<String, LambdaExpression> terms) {
+    private static void loadCommand(String filename, Map<String, LambdaExpression> terms, boolean warnOnRedefinition) {
         int termsParsed = 0;
         int expressionsParsed = 0;        
         int errors = 0;
@@ -172,11 +172,11 @@ public class Main {
                     if (tokens.length > 0) {
                         if(tokens[0].equals(Character.toString(Constants.INCLUDE_FILE))){
                             for (int i = 1; i < tokens.length; i++) {
-                                loadCommand(tokens[i], terms);
+                                loadCommand(tokens[i], terms, false);
                             }
                         } else {
                             if (Parser.IsTermDeclaration(tokens)) {
-                                String termName = Parser.ParseTermDeclaration(tokens, terms);
+                                String termName = Parser.ParseTermDeclaration(tokens, terms, warnOnRedefinition);
                                 System.out.println(terms.get(termName).OutputString());
                                 termsParsed++;
                             } else {
@@ -228,7 +228,7 @@ public class Main {
     private static void parseArguments(String[] args, Map<String, LambdaExpression> terms) {        
         for (int i = 0; i < args.length; i++){
             String filename = args[i];
-            loadCommand(filename, terms);
+            loadCommand(filename, terms, true);
         }
     }
 
