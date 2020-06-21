@@ -34,8 +34,10 @@ public class Main {
         // Debug flag
         boolean debugMode = false;
         
+        // Display introductory message
         DisplayMessage.Info(Constants.LAMBDA_CALCULUS, Constants.LAMBDA_CALCULUS_INFO);
 
+        // Load any script files passed as arguments to application
         parseArguments(args, terms);
         
         String input = "";
