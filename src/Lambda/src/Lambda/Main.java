@@ -16,12 +16,10 @@ import java.util.Map;
 
  * Check that when declaring new terms (either through console or through
    script file) that it doesn't clash with a reserved word (e.g. 'help', 'quit')
-   
- * Check case of input (for both terms and commands)
 
  * Use alpha-equivalence to check if final value matches an existing term
  
- * Warn on terms with same alpha-equivalence?
+ * Warn on terms with same alpha-equivalence? No too much work!
 
  * Search for TODOs!
  */

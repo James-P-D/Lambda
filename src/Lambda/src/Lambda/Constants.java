@@ -103,15 +103,29 @@ public class Constants {
     public static final String WARNING_TERM_ALREADY_DEFINED          = "Term already defined: %s";
     public static final String WARNING_FILE_CONTAINS_NOTHING         = "%s - Contains no terms or expressions";
     
-    public static final ArrayList<String> allCommands                = new ArrayList<String>() {{
-            add("QUIT_COMMAND");
-            add("EXIT_COMMAND");
-            add("ALPHA_COMMAND");
-            add("DEBUG_COMMAND");
-            add("HELP_COMMAND");
-            add("TERMS_COMMAND");
-            add("LOAD_COMMAND");
+    // All commands. Users cannot create terms called 'help', 'load', etc.
+    public static final ArrayList<String> reservedWords              = new ArrayList<String>() {{
+            add(QUIT_COMMAND);
+            add(EXIT_COMMAND);
+            add(ALPHA_COMMAND);
+            add(DEBUG_COMMAND);
+            add(HELP_COMMAND);
+            add(TERMS_COMMAND);
+            add(LOAD_COMMAND);
         }
-        private static final long serialVersionUID = -3995135037673286855L;
+        private static final long serialVersionUID = 1L;
     };    
+    
+    // All lines displayed when user enters 'help'
+    public static final ArrayList<String> allHelpLines               = new ArrayList<String>() {{
+            add("HELP_INFO_1");
+            add("HELP_INFO_2");
+            add("HELP_INFO_3");
+            add("HELP_INFO_4");
+            add("HELP_INFO_5");
+            add("HELP_INFO_6");
+            add("HELP_INFO_7");
+        }
+        private static final long serialVersionUID = 1L;
+    };              
 }
