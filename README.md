@@ -59,7 +59,7 @@ HELP:           alpha           - alpha-equivalence
 
 ### Loading Files
 
-It is possible to load files which contain terms or expressions by using the `load` command. For example, the application comes with a `[booleans.lbd](https://github.com/James-P-D/Lambda/blob/master/src/Lambda/src/Lambda/booleans.lbd)` file which contains the following:
+It is possible to load files which contain terms or expressions by using the `load` command. For example, the application comes with a [booleans.lbd](https://github.com/James-P-D/Lambda/blob/master/src/Lambda/src/Lambda/booleans.lbd) file which contains the following:
 
 ```
 # True and false values
@@ -93,7 +93,7 @@ EXAMPLE HERE
 
 Some files may require terms which exist in *other* files. In these cases we can start the file with a `$` symbol followed by the name of other files we need to include.
 
-For example `(maths.lbd)[https://github.com/James-P-D/Lambda/blob/master/src/Lambda/src/Lambda/maths.lbd]` file contains the following:
+For example [maths.lbd](https://github.com/James-P-D/Lambda/blob/master/src/Lambda/src/Lambda/maths.lbd) file contains the following:
 
 ```
 $ booleans.lbd
@@ -187,12 +187,12 @@ QUITTING: Bye!
 
 As already mentioned, the application comes with a number of library files which contain definitions for boolean operators, maths, conditionals, etc:
 
-* `[booleans.lbd](https://github.com/James-P-D/Lambda/blob/master/src/Lambda/src/Lambda/booleans.lbd)` - True, false, and, or, etc.
-* `[maths.lbd](https://github.com/James-P-D/Lambda/blob/master/src/Lambda/src/Lambda/mathss.lbd)` - Numbers 1-10, add, subtract, etc.
-* `[conditionals.lbd](https://github.com/James-P-D/Lambda/blob/master/src/Lambda/src/Lambda/mathss.lbd)` - If..then..else, equality, greater-than-or-equal, etc.
-* `[tuple.lbd](https://github.com/James-P-D/Lambda/blob/master/src/Lambda/src/Lambda/tuples.lbd)` - Pairs of values.
-* `[lists.lbd](https://github.com/James-P-D/Lambda/blob/master/src/Lambda/src/Lambda/lists.lbd)` - Head, tail, etc.
-* `[functions.lbd](https://github.com/James-P-D/Lambda/blob/master/src/Lambda/src/Lambda/functions.lbd)` - Recursion, etc.
+* [booleans.lbd](https://github.com/James-P-D/Lambda/blob/master/src/Lambda/src/Lambda/booleans.lbd) - True, false, and, or, etc.
+* [maths.lbd](https://github.com/James-P-D/Lambda/blob/master/src/Lambda/src/Lambda/mathss.lbd) - Numbers 1-10, add, subtract, etc.
+* [conditionals.lbd](https://github.com/James-P-D/Lambda/blob/master/src/Lambda/src/Lambda/mathss.lbd) - If..then..else, equality, greater-than-or-equal, etc.
+* [tuple.lbd](https://github.com/James-P-D/Lambda/blob/master/src/Lambda/src/Lambda/tuples.lbd) - Pairs of values.
+* [lists.lbd](https://github.com/James-P-D/Lambda/blob/master/src/Lambda/src/Lambda/lists.lbd) - Head, tail, etc.
+* [functions.lbd](https://github.com/James-P-D/Lambda/blob/master/src/Lambda/src/Lambda/functions.lbd) - Recursion, etc.
 
 ### Building Notes and Problems
 
