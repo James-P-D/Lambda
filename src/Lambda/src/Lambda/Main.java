@@ -141,14 +141,11 @@ public class Main {
     
     // List the commands available
     private static void helpCommand() {
-        DisplayMessage.Info(Constants.HELP, Constants.HELP_INFO_1); 
-        DisplayMessage.Info(Constants.HELP, Constants.HELP_INFO_2); 
-        DisplayMessage.Info(Constants.HELP, Constants.HELP_INFO_3); 
-        DisplayMessage.Info(Constants.HELP, Constants.HELP_INFO_4); 
-        DisplayMessage.Info(Constants.HELP, Constants.HELP_INFO_5); 
-        DisplayMessage.Info(Constants.HELP, Constants.HELP_INFO_6);         
+        for(String helpLine: Constants.allHelpLines) {
+            DisplayMessage.Info(Constants.HELP, helpLine);                
+        }
     }
-
+    
     // Load a script file
     private static void loadCommand(String filename, Map<String, LambdaExpression> terms, boolean warnOnRedefinition) {
         int termsParsed = 0;
@@ -178,7 +175,7 @@ public class Main {
                                 loadCommand(tokens[i], terms, false);
                             }
                         } else {
-                            if (Parser.IsTermDeclaration(tokens)) {
+                            if (Parser.IsTermDeclaration(tokens, lineNumber)) {
                                 String termName = Parser.ParseTermDeclaration(tokens, terms, warnOnRedefinition);
                                 System.out.println(terms.get(termName).OutputString());
                                 termsParsed++;
