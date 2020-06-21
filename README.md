@@ -15,6 +15,8 @@ A simple [Lambda Calculus](https://en.wikipedia.org/wiki/Lambda_calculus) expres
     4. [Debug Mode](#Debug-Mode)
     5. [Alpha Mode](#Alpha-Mode)
     6. [Quitting](#Quitting)
+    7. [Library Files](#Library-Files)
+    8. [Examples](#Examples)
 3. [Building Notes and Problems](#Building-Notes-and-Problems)
 4. [Acknowledgements](#Acknowledgements)
     
@@ -73,9 +75,9 @@ not = \a.a false true
 xor = \x.\y. x (not y) y
 ```
 
-In the above file we have used the `\` symbol for `λ` character. Either one is fine, just make that if you make any changes to a file, that you are consistent and if using greek letters, that you save the file as UTF-8.
+In the above file we have used the `\` symbol for `λ` character. Either one is fine, just make that if you are consistent and if using greek letters, that you save the file as UTF-8.
 
-Also note that any line beginning with a `#` symbol will be treated as a comment.
+Also note that any line beginning with a `#` symbol will be treated as a comment and ignored.
 
 We can load the file easily enough:
 
@@ -85,13 +87,7 @@ LOADING FILE: booleans.lbd
 LOADING FILE: booleans.lbd - 6 term(s) and 0 expression(s) parsed
 ```
 
-After loading the file, we can enter terms on the prompt:
-
-```
-EXAMPLE HERE
-```
-
-Some files may require terms which exist in *other* files. In these cases we can start the file with a `$` symbol followed by the name of other files we need to include.
+Some files may require terms which exist in *other* files. In these cases we can start the file with a `$` symbol followed by the names of other files we need to include.
 
 For example [maths.lbd](https://github.com/James-P-D/Lambda/blob/master/src/Lambda/src/Lambda/maths.lbd) file contains the following:
 
@@ -130,6 +126,14 @@ LOADING FILE: maths.lbd - 18 term(s) and 0 expression(s) parsed
 ```
 
 As soon as we start loading the terms in `maths.lbd`, the application finds the line `$ booleans.lbd` and knows it needs to import the terms from that file otherwise there would be errors when we encounter terms like `true` and `false` which are used in `maths.lbd`.
+
+Finally, it is also possible to load files on startup by passing the filenames as a parameters to the .class file:
+
+```
+EXAMPLE GOES HERE
+```
+
+For more information on building the project, see the [Building Notes and Problems](#Building-Notes-and-Problems) section.
 
 ### Debug Mode
 
@@ -188,11 +192,26 @@ QUITTING: Bye!
 As already mentioned, the application comes with a number of library files which contain definitions for boolean operators, maths, conditionals, etc:
 
 * [booleans.lbd](https://github.com/James-P-D/Lambda/blob/master/src/Lambda/src/Lambda/booleans.lbd) - True, false, and, or, etc.
-* [maths.lbd](https://github.com/James-P-D/Lambda/blob/master/src/Lambda/src/Lambda/mathss.lbd) - Numbers 1-10, add, subtract, etc.
-* [conditionals.lbd](https://github.com/James-P-D/Lambda/blob/master/src/Lambda/src/Lambda/mathss.lbd) - If..then..else, equality, greater-than-or-equal, etc.
+* [maths.lbd](https://github.com/James-P-D/Lambda/blob/master/src/Lambda/src/Lambda/maths.lbd) - Numbers 1-10, add, subtract, etc.
+* [conditionals.lbd](https://github.com/James-P-D/Lambda/blob/master/src/Lambda/src/Lambda/conditionals.lbd) - If..then..else, equality, greater-than-or-equal, etc.
 * [tuple.lbd](https://github.com/James-P-D/Lambda/blob/master/src/Lambda/src/Lambda/tuples.lbd) - Pairs of values.
 * [lists.lbd](https://github.com/James-P-D/Lambda/blob/master/src/Lambda/src/Lambda/lists.lbd) - Head, tail, etc.
 * [functions.lbd](https://github.com/James-P-D/Lambda/blob/master/src/Lambda/src/Lambda/functions.lbd) - Recursion, etc.
+
+### Examples
+
+Now that we have a full understanding of Lambda-Calculus and of how the application works, we can start writing some programs.
+
+
+
+```
+LOAD
+λ> and true true
+true
+λ> and true false
+false
+```
+
 
 ### Building Notes and Problems
 
@@ -207,4 +226,4 @@ A fair amount of work went into getting the console I/O to work and display nice
 
 ### Acknowledgements
 
-The application uses [RawConsoleInput](https://www.source-code.biz/snippets/java/RawConsoleInput/) courtesy of [Christian d'Heureuse](https://stackoverflow.com/questions/1066318/how-to-read-a-single-char-from-the-console-in-java-as-the-user-types-it/30008252#30008252) for the single-character-input, and [Yin Shan's](https://stackoverflow.com/a/8921509/930389) code for displaying UTF8 characters.
+The application uses [RawConsoleInput](https://www.source-code.biz/snippets/java/RawConsoleInput/) courtesy of [Christian d'Heureuse](https://stackoverflow.com/questions/1066318/how-to-read-a-single-char-from-the-console-in-java-as-the-user-types-it/30008252#30008252) for the single-character-input, and [Yin Shan's](https://stackoverflow.com/a/8921509/930389) code for displaying of Greek symbols.
