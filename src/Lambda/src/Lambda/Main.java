@@ -86,7 +86,9 @@ public class Main {
                         alphaCount++;
                     }
                 } while (!input.equals(""));
-                if (!((input.equals(Constants.QUIT_COMMAND)) || (input.equals(Constants.EXIT_COMMAND)))) {
+                if (((input.equals(Constants.QUIT_COMMAND)) || (input.equals(Constants.EXIT_COMMAND)))) {
+                    DisplayMessage.Info(Constants.QUITTING, Constants.QUIT_MESSAGE);
+                } else {
                     if (alphas.size() < 2) {
                         DisplayMessage.Error(Constants.ERROR_MUST_PROVIDE_AT_LEAST_TWO_TERMS);
                     } else {
@@ -103,9 +105,11 @@ public class Main {
                 helpCommand();
             } else if (input.startsWith(Constants.LOAD_COMMAND)) {
                 loadCommand(input.replace(Constants.LOAD_COMMAND, "").trim(), terms, true);
+            } else if ((input.startsWith(Constants.QUIT_COMMAND)) || (input.startsWith(Constants.EXIT_COMMAND))) {
+                DisplayMessage.Info(Constants.QUITTING, Constants.QUIT_MESSAGE);
             } else {
                 // In all other cases, treat the input as a term
-                // or expresion to be parsed and evaluated
+                // or expression to be parsed and evaluated
                 try {
                     String[] tokens = Tokeniser.Tokenise(input);
                     if (tokens.length > 0) {
@@ -118,7 +122,7 @@ public class Main {
                             LambdaExpression expression = Parser.ParseExpression(tokens, new IntRef(0));
                             Console.print(Constants.BETA + Constants.PROMPT,  Constants.PROMPT_COLOR);
                             // TODO: Update to color!
-                            System.out.println("EXPRESION: " + expression.OutputString());
+                            System.out.println("EXPRESSION: " + expression.OutputString());
                         }
                     }
                 } catch (ParseException e) {
@@ -126,7 +130,6 @@ public class Main {
                 }
             }
         } while ((!input.equals(Constants.QUIT_COMMAND)) && (!input.equals(Constants.EXIT_COMMAND)));
-        DisplayMessage.Info(Constants.QUITTING, Constants.QUIT_MESSAGE);
     }
 
     // Toggle the debugMode flag and output state to stdout
