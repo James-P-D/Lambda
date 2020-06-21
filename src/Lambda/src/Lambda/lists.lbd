@@ -1,9 +1,5 @@
-# Requires booleans.lbd to work
-$ booleans.lbd 
-
-pair = \a.\b.\f.f a b
-first = \p.p true
-second = \p.p false
+# Requires booleans.lbd and tuples.lbd
+$ booleans.lbd tuples.lbd
 
 list_element = \x.\xs.pair false (pair x xs)
 empty_list = pair true true

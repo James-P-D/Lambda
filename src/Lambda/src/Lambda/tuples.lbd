@@ -1,0 +1,6 @@
+# Requires booleans.lbd
+$ booleans.lbd
+
+pair = \a.\b.\f.f a b
+first = \p.p true
+second = \p.p false
