@@ -1,6 +1,8 @@
+# True and false values
 true = \x.\y.x
 false = \x.\y.y
 
+# Bunch of normal operators for booleans
 and = \a.\b.a b a
 or = \a.\b.a a b
 not = \a.a false true

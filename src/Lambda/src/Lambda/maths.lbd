@@ -1,3 +1,5 @@
+$ booleans.lbd
+
 zero  = \f.\a.a
 one   = \f.\a.f a
 two   = \f.\a.f (f a)
