@@ -93,7 +93,7 @@ EXAMPLE HERE
 
 Some files may require terms which exist in *other* files. In these cases we can start the file with a `$` symbol followed by the name of other files we need to include.
 
-For example [maths.lbd](https://github.com/James-P-D/Lambda/blob/master/src/Lambda/src/Lambda/maths.lbd) file contains the following:
+For example `(maths.lbd)[https://github.com/James-P-D/Lambda/blob/master/src/Lambda/src/Lambda/maths.lbd]` file contains the following:
 
 ```
 $ booleans.lbd
