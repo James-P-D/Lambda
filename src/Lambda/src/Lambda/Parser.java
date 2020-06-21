@@ -11,7 +11,7 @@ public class Parser {
             return false;
         }
         
-        if (Constants.allCommands.contains(name)) {
+        if (Constants.reservedWords.contains(name)) {
             return false;
         }
         
@@ -32,8 +32,24 @@ public class Parser {
         return terms.containsKey(termName);            
     }
     
-    public static boolean IsTermDeclaration(String[] tokens) {
-        return ((tokens.length >= 3) && (tokens[1].equals(Character.toString(Constants.EQUALS))));
+    public static boolean IsTermDeclaration(String[] tokens) throws ParseException {
+        return IsTermDeclaration(tokens, -1);
+    }
+    
+    public static boolean IsTermDeclaration(String[] tokens, int lineNumber) throws ParseException {
+        if ((tokens.length >= 2) && (tokens[1].equals(Character.toString(Constants.EQUALS)))) {
+            if (tokens.length >= 3) {
+                return true;
+            }
+            
+            if (lineNumber == -1) {
+                throw new ParseException(String.format(Constants.ERROR_INCOMPLETE_TERM_DECLARATION));
+            }else{
+                throw new ParseException(String.format(Constants.ERROR_INCOMPLETE_TERM_DECLARATION_ON_LINE, lineNumber));
+            }
+        }
+        
+        return false;
     }
     
     public static String ParseTermDeclaration(String[] tokens, Map<String, LambdaExpression> terms, boolean warnOnRedefinition) throws ParseException {
@@ -52,22 +68,6 @@ public class Parser {
         terms.put(termName, expression);
         return termName;
     }
-
-    private static boolean hasNextExpression(String[] tokens, IntRef index) {
-        IntRef tempIndex = new IntRef(index.value);
-        
-        tempIndex.value++;
-        while (tempIndex.value < (tokens.length - 1)) {
-            String token = tokens[tempIndex.value];
-            if ((!token.equals(Character.toString(Constants.OPEN_PARENTHESES))) && 
-                (!token.equals(Character.toString(Constants.CLOSE_PARENTHESES)))) {
-                return true;
-            }
-            tempIndex.value++;
-        }
-        
-        return false;
-    }
     
     public static LambdaExpression ParseExpression(String[] tokens, IntRef index) throws ParseException {
         String token = tokens[index.value];
@@ -80,7 +80,11 @@ public class Parser {
             LambdaExpression firstExpression = null;
                 
             index.value++;
-            do {                                            
+            if(index.value == tokens.length) {
+                throw new ParseException(Constants.ERROR_UNBALANCED_PARENTHESES);
+            }
+            token = tokens[index.value];
+            while(!token.equals(Character.toString(Constants.CLOSE_PARENTHESES))) {                                            
                 LambdaExpression exp = ParseExpression(tokens, index);
                 if (firstExpression == null) {
                     firstExpression = exp;
@@ -100,7 +104,7 @@ public class Parser {
                 }
                 
                 token = tokens[index.value];
-            } while (!token.equals(Character.toString(Constants.CLOSE_PARENTHESES)));
+            }
                 
             if (rootExpression == null) {
                 rootExpression = firstExpression;
@@ -110,19 +114,10 @@ public class Parser {
                 //TODO: Are we at the end of the list?
                 throw new ParseException(Constants.ERROR_NOTHING_TO_PARSE);
             }
-                
+
             return rootExpression;            
         } else {
-            if (hasNextExpression(tokens, index)) {
-                LambdaExpression firstExpression = parseLambdaName(tokens, index);
-                index.value++;
-                
-                LambdaApplication rootExpression = new LambdaApplication(firstExpression, ParseExpression(tokens, index)); 
-                
-                return rootExpression;
-            } else {
-                return parseLambdaName(tokens, index);
-            }
+            return new LambdaName(token);
         }
     }
     
