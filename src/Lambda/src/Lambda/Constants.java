@@ -121,13 +121,13 @@ public class Constants {
     
     // All lines displayed when user enters 'help'
     public static final ArrayList<String> allHelpLines                   = new ArrayList<String>() {{
-            add("HELP_INFO_1");
-            add("HELP_INFO_2");
-            add("HELP_INFO_3");
-            add("HELP_INFO_4");
-            add("HELP_INFO_5");
-            add("HELP_INFO_6");
-            add("HELP_INFO_7");
+            add(HELP_INFO_1);
+            add(HELP_INFO_2);
+            add(HELP_INFO_3);
+            add(HELP_INFO_4);
+            add(HELP_INFO_5);
+            add(HELP_INFO_6);
+            add(HELP_INFO_7);
         }
         private static final long serialVersionUID = 1L;
     };              
