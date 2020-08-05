@@ -102,8 +102,8 @@ public class Parser {
     
     public static LambdaExpression StartParseExpression(String[] tokens) throws ParseException {
         IntRef parenthesesDepth = new IntRef(0);
-        LambdaExpression expression = ParseExpression(tokens, new IntRef(0), new IntRef(0));
-        if (parenthesesDepth.value > 0) {
+        LambdaExpression expression = ParseExpression(tokens, new IntRef(0), parenthesesDepth);
+        if (parenthesesDepth.value != 0) {
             throw new ParseException(Constants.ERROR_UNBALANCED_PARENTHESES);
         }
         return expression;
@@ -112,7 +112,7 @@ public class Parser {
     public static LambdaExpression StartParseExpression(String[] tokens, IntRef index) throws ParseException {
         IntRef parenthesesDepth = new IntRef(0);
         LambdaExpression expression = ParseExpression(tokens, index, parenthesesDepth);
-        if (parenthesesDepth.value > 0) {
+        if (parenthesesDepth.value != 0) {
             throw new ParseException(Constants.ERROR_UNBALANCED_PARENTHESES);
         }
         return expression;
