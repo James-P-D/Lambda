@@ -19,10 +19,10 @@ public class LambdaApplication extends LambdaExpression {
     
     @Override
     public String OutputString() {
-        return Constants.OPEN_PARENTHESES +
-               firstExpression.OutputString() +
+        return ((firstExpression instanceof LambdaName) ? firstExpression.OutputString()
+                                                        : (Constants.OPEN_PARENTHESES + firstExpression.OutputString() + Constants.CLOSE_PARENTHESES)) +
                Constants.SPACE +
-               secondExpression.OutputString() +
-               Constants.CLOSE_PARENTHESES;
+               ((secondExpression instanceof LambdaName) ? secondExpression.OutputString()
+                                                         : (Constants.OPEN_PARENTHESES + secondExpression.OutputString() + Constants.CLOSE_PARENTHESES));
     }
 }
