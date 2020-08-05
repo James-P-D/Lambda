@@ -139,9 +139,7 @@ public class Parser {
                 }
                         
                 index.value++;
-                LambdaExpression nextExpression = null;
-                currentExpression = new LambdaFunction(name, nextExpression);
-                currentExpression = nextExpression;
+                currentExpression = new LambdaFunction(name, ParseExpression(tokens, index, parenthesesDepth));
             } else if (token.equals(Character.toString(Constants.OPEN_PARENTHESES))) {
                 parenthesesDepth.value++;
                 index.value++;
