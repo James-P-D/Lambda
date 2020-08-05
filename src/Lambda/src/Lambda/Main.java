@@ -120,13 +120,19 @@ public class Main {
                         if (Parser.IsTermDeclaration(tokens)) {
                             String termName = Parser.ParseTermDeclaration(tokens, terms, true);
                             Console.print(Constants.BETA + Constants.PROMPT,  Constants.PROMPT_COLOR);
-                            // TODO: Update to color!
-                            System.out.println("TERM: "+ termName + " " + terms.get(termName).OutputString());
+                            
+                            Console.outputToken(termName);
+                            Console.outputToken(Character.toString(Constants.SPACE));
+                            Console.outputToken(Character.toString(Constants.EQUALS));
+                            Console.outputToken(Character.toString(Constants.SPACE));
+                            Console.outputToken(terms.get(termName).OutputString());
+                            Console.println();
                         } else {
                             LambdaExpression expression = Parser.StartParseExpression(tokens);
                             Console.print(Constants.BETA + Constants.PROMPT,  Constants.PROMPT_COLOR);
-                            // TODO: Update to color!
-                            System.out.println("EXPRESSION: " + expression.OutputString());
+
+                            Console.outputToken(expression.OutputString());
+                            Console.println();
                         }
                     }
                 } catch (ParseException e) {
@@ -181,11 +187,9 @@ public class Main {
                         } else {
                             if (Parser.IsTermDeclaration(tokens, lineNumber)) {
                                 String termName = Parser.ParseTermDeclaration(tokens, terms, warnOnRedefinition);
-                                System.out.println(terms.get(termName).OutputString());
                                 termsParsed++;
                             } else {
                                 LambdaExpression expression = Parser.StartParseExpression(tokens, new IntRef(0));
-                                System.out.println(expression.OutputString());
                                 expressionsParsed++;
                             }
                         }
