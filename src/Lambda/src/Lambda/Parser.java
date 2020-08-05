@@ -8,7 +8,7 @@ public class Parser {
         String validFirstCharacter = "abcdefghijklmnopqrstuvwxyz_";
         String validRestCharacters = validFirstCharacter + "0123456789"; 
         
-        // Check identifer is not empty
+        // Check identifier is not empty
         if (name.length() == 0) {
             return false;
         }
@@ -27,7 +27,7 @@ public class Parser {
         for (int i = 1; i < name.length(); i++) {
             if (!validRestCharacters.contains(Character.toString(name.charAt(i)))) {
                 return false;
-            }            
+            }
         }
         
         // If we get here, identifier is fine
@@ -35,7 +35,7 @@ public class Parser {
     }
  
     // Check if term name is already taken (redefining terms isn't a problem, but
-    // we will display warning messages incase user accidently overwrites a term
+    // we will display warning messages in case user accidently overwrites a term
     private static boolean termAlreadyExists(String termName, Map<String, LambdaExpression> terms) {
         return terms.containsKey(termName);            
     }
@@ -52,7 +52,7 @@ public class Parser {
     // Check if we have a term. Note we include a 'lineNumber' field for error
     // messages if we are loading from a file
     public static boolean IsTermDeclaration(String[] tokens, int lineNumber) throws ParseException {
-        // Check we have atleast 2 tokens, and that the second is '='
+        // Check we have at least 2 tokens, and that the second is '='
         if ((tokens.length >= 2) && (tokens[1].equals(Character.toString(Constants.EQUALS)))) {
             // Valid term declaration will include at least 3 tokens ('name = something')
             if (tokens.length >= 3) {
@@ -83,95 +83,81 @@ public class Parser {
         }
         
         // Sometimes we don't want to warn about overwriting terms (like when loading terms
-        // from files within files.
+        // from files within files.)
         if (warnOnRedefinition) {
             if (termAlreadyExists(termName, terms)) {
                 DisplayMessage.Warning(String.format(Constants.WARNING_TERM_ALREADY_DEFINED, termName));
             }            
         }
         
-        // Parse the ecpression after the equals sign
-        LambdaExpression expression = ParseExpression(tokens, new IntRef(2));
+        // Parse the expression after the equals sign
+        LambdaExpression expression = StartParseExpression(tokens, 2);
 
-        // Add the expression to the hashtable of all terms
+        // Add the expression to the hash-table of all terms
         terms.put(termName, expression);
         
         // Finally, return the term name
         return termName;
     }
     
-    public static LambdaExpression ParseExpression(String[] tokens, IntRef index) throws ParseException {
-        String token = tokens[index.value];
-        //System.out.println(token);
-        if ((token.equals(Character.toString(Constants.LAMBDA))) || (token.equals(Character.toString(Constants.LAMBDA_SUBSTITUTE)))) {
-            index.value++;
-            return parseLambdaFunction(tokens, index);
-        } else if (token.equals(Character.toString(Constants.OPEN_PARENTHESES))) {
-            LambdaExpression rootExpression = null;
-            LambdaExpression firstExpression = null;
+    public static LambdaExpression StartParseExpression(String[] tokens) throws ParseException {
+        return ParseExpression(tokens, 0);
+    }
+
+    public static LambdaExpression StartParseExpression(String[] tokens, int index) throws ParseException {
+        return ParseExpression(tokens, index);
+    }
+
+    private static LambdaExpression ParseExpression(String[] tokens, int index) throws ParseException {
+        int parenthesesDepth = 0;
+        LambdaExpression currentExpression = null;
+        while (index < tokens.length) {
+            
+            String token = tokens[index]; 
+            
+            if ((token.equals(Character.toString(Constants.LAMBDA))) || (token.equals(Character.toString(Constants.LAMBDA_SUBSTITUTE)))) {
+                index++;
                 
-            index.value++;
-            if(index.value == tokens.length) {
-                throw new ParseException(Constants.ERROR_UNBALANCED_PARENTHESES);
-            }
-            token = tokens[index.value];
-            while(!token.equals(Character.toString(Constants.CLOSE_PARENTHESES))) {                                            
-                LambdaExpression exp = ParseExpression(tokens, index);
-                if (firstExpression == null) {
-                    firstExpression = exp;
+                if (tokens.length < (index + 3)) {
+                    throw new ParseException(Constants.ERROR_BADLY_FORMATTED_FUNCTION);
+                }
+
+                LambdaName name = parseLambdaName(tokens, index);
+
+                index++;
+                if (!tokens[index].equals(Character.toString(Constants.PERIOD))) {
+                    throw new ParseException(Constants.ERROR_EXPECTED_PERIOD_IN_FUNCTION);
+                }
+                        
+                index++;
+                LambdaExpression nextExpression = null;
+                currentExpression = new LambdaFunction(name, nextExpression);
+                currentExpression = nextExpression;
+            } else if (token.equals(Constants.OPEN_PARENTHESES)) {
+                parenthesesDepth++;
+                index++;
+            } else {
+                LambdaName name = parseLambdaName(tokens, index);
+                index++;
+                if (currentExpression == null) {
+                    currentExpression = name;
                 } else {
-                    if (rootExpression == null) {
-                        rootExpression = new LambdaApplication(firstExpression, exp);
-                        firstExpression = exp;
-                    } else {
-                        firstExpression = new LambdaApplication(firstExpression, exp);
-                        firstExpression = exp;
-                    }
+                    LambdaApplication tempExpression = new LambdaApplication(currentExpression, name); 
+                    currentExpression = tempExpression;
                 }
-
-                index.value++;
-                if(index.value == tokens.length) {
-                    throw new ParseException(Constants.ERROR_UNBALANCED_PARENTHESES);
-                }
-                
-                token = tokens[index.value];
             }
-                
-            if (rootExpression == null) {
-                rootExpression = firstExpression;
-            }
-                
-            if (rootExpression == null) {
-                //TODO: Are we at the end of the list?
-                throw new ParseException(Constants.ERROR_NOTHING_TO_PARSE);
-            }
-
-            return rootExpression;            
-        } else {
-            return new LambdaName(token);
         }
+
+        if (parenthesesDepth > 0) {
+            throw new ParseException(Constants.ERROR_UNBALANCED_PARENTHESES);
+        }
+        return currentExpression;
     }
     
-    // Parse a lambda function ('\x.')
-    private static LambdaFunction parseLambdaFunction(String[] tokens, IntRef index) throws ParseException {
-        if (tokens.length < (index.value + 3)) {
-            throw new ParseException(Constants.ERROR_BADLY_FORMATTED_FUNCTION);
-        }
-
-        LambdaName name = parseLambdaName(tokens, index);
-
-        index.value++;
-        if (!tokens[index.value].equals(Character.toString(Constants.PERIOD))) {
-            throw new ParseException(Constants.ERROR_EXPECTED_PERIOD_IN_FUNCTION);
-        }
-                
-        index.value++;
-        return new LambdaFunction(name, ParseExpression(tokens, index));
-    }
     
     // Parse a lambda name
-    private static LambdaName parseLambdaName(String[] tokens, IntRef index) throws ParseException {
-        String name = tokens[index.value];
+    private static LambdaName parseLambdaName(String[] tokens, int index) throws ParseException {
+        String name = tokens[index];
         if (!isValidIdentifierName(name)) {
             throw new ParseException(String.format(Constants.ERROR_INVALID_IDENTIFIER_NAME, name));
         }        

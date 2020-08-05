@@ -28,7 +28,11 @@ public class Main {
     public static void main(String[] args) {
         // Dictionary mapping term names to their expressions
         Map<String, LambdaExpression> terms = new HashMap<String, LambdaExpression>();
-        
+
+        //terms.put("true", new LambdaFunction(new LambdaName("x"), new LambdaFunction(new LambdaName("y"), new LambdaName("x"))));
+        //terms.put("false", new LambdaFunction(new LambdaName("x"), new LambdaFunction(new LambdaName("y"), new LambdaName("y"))));
+        //terms.put("and", new LambdaFunction(new LambdaName("a"), new LambdaFunction(new LambdaName("b"), new LambdaApplication(new LambdaApplication(new LambdaName("a"), new LambdaName("b")), new LambdaName("a")))));
+                
         // Debug flag
         boolean debugMode = false;
         
@@ -119,7 +123,7 @@ public class Main {
                             // TODO: Update to color!
                             System.out.println("TERM: "+ termName + " " + terms.get(termName).OutputString());
                         } else {
-                            LambdaExpression expression = Parser.ParseExpression(tokens, new IntRef(0));
+                            LambdaExpression expression = Parser.StartParseExpression(tokens);
                             Console.print(Constants.BETA + Constants.PROMPT,  Constants.PROMPT_COLOR);
                             // TODO: Update to color!
                             System.out.println("EXPRESSION: " + expression.OutputString());
@@ -180,7 +184,7 @@ public class Main {
                                 System.out.println(terms.get(termName).OutputString());
                                 termsParsed++;
                             } else {
-                                LambdaExpression expression = Parser.ParseExpression(tokens, new IntRef(0));
+                                LambdaExpression expression = Parser.StartParseExpression(tokens, 0);
                                 System.out.println(expression.OutputString());
                                 expressionsParsed++;
                             }
