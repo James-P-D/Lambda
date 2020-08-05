@@ -184,7 +184,7 @@ public class Main {
                                 System.out.println(terms.get(termName).OutputString());
                                 termsParsed++;
                             } else {
-                                LambdaExpression expression = Parser.StartParseExpression(tokens, 0);
+                                LambdaExpression expression = Parser.StartParseExpression(tokens, new IntRef(0));
                                 System.out.println(expression.OutputString());
                                 expressionsParsed++;
                             }

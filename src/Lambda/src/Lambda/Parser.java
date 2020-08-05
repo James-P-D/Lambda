@@ -91,7 +91,7 @@ public class Parser {
         }
         
         // Parse the expression after the equals sign
-        LambdaExpression expression = StartParseExpression(tokens, 2);
+        LambdaExpression expression = StartParseExpression(tokens, new IntRef(2));
 
         // Add the expression to the hash-table of all terms
         terms.put(termName, expression);
@@ -101,44 +101,66 @@ public class Parser {
     }
     
     public static LambdaExpression StartParseExpression(String[] tokens) throws ParseException {
-        return ParseExpression(tokens, 0);
+        IntRef parenthesesDepth = new IntRef(0);
+        LambdaExpression expression = ParseExpression(tokens, new IntRef(0), new IntRef(0));
+        if (parenthesesDepth.value > 0) {
+            throw new ParseException(Constants.ERROR_UNBALANCED_PARENTHESES);
+        }
+        return expression;
     }
 
-    public static LambdaExpression StartParseExpression(String[] tokens, int index) throws ParseException {
-        return ParseExpression(tokens, index);
+    public static LambdaExpression StartParseExpression(String[] tokens, IntRef index) throws ParseException {
+        IntRef parenthesesDepth = new IntRef(0);
+        LambdaExpression expression = ParseExpression(tokens, index, parenthesesDepth);
+        if (parenthesesDepth.value > 0) {
+            throw new ParseException(Constants.ERROR_UNBALANCED_PARENTHESES);
+        }
+        return expression;
     }
 
-    private static LambdaExpression ParseExpression(String[] tokens, int index) throws ParseException {
-        int parenthesesDepth = 0;
+    private static LambdaExpression ParseExpression(String[] tokens, IntRef index, IntRef parenthesesDepth) throws ParseException {
         LambdaExpression currentExpression = null;
-        while (index < tokens.length) {
+        while (index.value < tokens.length) {
             
-            String token = tokens[index]; 
+            String token = tokens[index.value]; 
             
             if ((token.equals(Character.toString(Constants.LAMBDA))) || (token.equals(Character.toString(Constants.LAMBDA_SUBSTITUTE)))) {
-                index++;
+                index.value++;
                 
-                if (tokens.length < (index + 3)) {
+                if (tokens.length < (index.value + 3)) {
                     throw new ParseException(Constants.ERROR_BADLY_FORMATTED_FUNCTION);
                 }
 
                 LambdaName name = parseLambdaName(tokens, index);
 
-                index++;
-                if (!tokens[index].equals(Character.toString(Constants.PERIOD))) {
+                index.value++;
+                if (!tokens[index.value].equals(Character.toString(Constants.PERIOD))) {
                     throw new ParseException(Constants.ERROR_EXPECTED_PERIOD_IN_FUNCTION);
                 }
                         
-                index++;
+                index.value++;
                 LambdaExpression nextExpression = null;
                 currentExpression = new LambdaFunction(name, nextExpression);
                 currentExpression = nextExpression;
-            } else if (token.equals(Constants.OPEN_PARENTHESES)) {
-                parenthesesDepth++;
-                index++;
+            } else if (token.equals(Character.toString(Constants.OPEN_PARENTHESES))) {
+                parenthesesDepth.value++;
+                index.value++;
+                LambdaExpression nextExpression = ParseExpression(tokens, index, parenthesesDepth);
+                if (nextExpression != null) {
+                    if (currentExpression == null) {
+                        currentExpression = nextExpression;
+                    } else {
+                        LambdaApplication tempExpression = new LambdaApplication(currentExpression, nextExpression); 
+                        currentExpression = tempExpression;
+                    }                    
+                }
+            } else if (token.equals(Character.toString(Constants.CLOSE_PARENTHESES))) {
+                parenthesesDepth.value--;
+                index.value++;
+                return currentExpression;
             } else {
                 LambdaName name = parseLambdaName(tokens, index);
-                index++;
+                index.value++;
                 if (currentExpression == null) {
                     currentExpression = name;
                 } else {
@@ -148,16 +170,13 @@ public class Parser {
             }
         }
 
-        if (parenthesesDepth > 0) {
-            throw new ParseException(Constants.ERROR_UNBALANCED_PARENTHESES);
-        }
         return currentExpression;
     }
     
     
     // Parse a lambda name
-    private static LambdaName parseLambdaName(String[] tokens, int index) throws ParseException {
-        String name = tokens[index];
+    private static LambdaName parseLambdaName(String[] tokens, IntRef index) throws ParseException {
+        String name = tokens[index.value];
         if (!isValidIdentifierName(name)) {
             throw new ParseException(String.format(Constants.ERROR_INVALID_IDENTIFIER_NAME, name));
         }        
