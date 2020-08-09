@@ -35,7 +35,7 @@ public class Parser {
     }
  
     // Check if term name is already taken (redefining terms isn't a problem, but
-    // we will display warning messages in case user accidently overwrites a term
+    // we may need to display warning messages in case user accidently overwrites a term)
     private static boolean termAlreadyExists(String termName, Map<String, LambdaExpression> terms) {
         return terms.containsKey(termName);            
     }
@@ -91,7 +91,7 @@ public class Parser {
         }
         
         // Parse the expression after the equals sign
-        LambdaExpression expression = StartParseExpression(tokens, new IntRef(2));
+        LambdaExpression expression = StartParseExpression(tokens, new IntRef(2), false, terms);
 
         // Add the expression to the hash-table of all terms
         terms.put(termName, expression);
@@ -100,28 +100,36 @@ public class Parser {
         return termName;
     }
     
-    public static LambdaExpression StartParseExpression(String[] tokens) throws ParseException {
+    public static LambdaExpression StartParseExpression(String[] tokens,
+                                                        boolean resolveTerms,
+                                                        Map<String, LambdaExpression> terms) throws ParseException {
         IntRef parenthesesDepth = new IntRef(0);
-        LambdaExpression expression = ParseExpression(tokens, new IntRef(0), parenthesesDepth);
+        LambdaExpression expression = ParseExpression(tokens, new IntRef(0), parenthesesDepth, resolveTerms, terms);
         if (parenthesesDepth.value != 0) {
             throw new ParseException(Constants.ERROR_UNBALANCED_PARENTHESES);
         }
         return expression;
     }
 
-    public static LambdaExpression StartParseExpression(String[] tokens, IntRef index) throws ParseException {
+    public static LambdaExpression StartParseExpression(String[] tokens,
+                                                        IntRef index,
+                                                        boolean resolveTerms,
+                                                        Map<String, LambdaExpression> terms) throws ParseException {
         IntRef parenthesesDepth = new IntRef(0);
-        LambdaExpression expression = ParseExpression(tokens, index, parenthesesDepth);
+        LambdaExpression expression = ParseExpression(tokens, index, parenthesesDepth, resolveTerms, terms);
         if (parenthesesDepth.value != 0) {
             throw new ParseException(Constants.ERROR_UNBALANCED_PARENTHESES);
         }
         return expression;
     }
 
-    private static LambdaExpression ParseExpression(String[] tokens, IntRef index, IntRef parenthesesDepth) throws ParseException {
+    private static LambdaExpression ParseExpression(String[] tokens,
+                                                    IntRef index,
+                                                    IntRef parenthesesDepth,
+                                                    boolean resolveTerms,
+                                                    Map<String, LambdaExpression> terms) throws ParseException {
         LambdaExpression currentExpression = null;
-        while (index.value < tokens.length) {
-            
+        while (index.value < tokens.length) {            
             String token = tokens[index.value]; 
             
             if ((token.equals(Character.toString(Constants.LAMBDA))) || (token.equals(Character.toString(Constants.LAMBDA_SUBSTITUTE)))) {
@@ -131,7 +139,7 @@ public class Parser {
                     throw new ParseException(Constants.ERROR_BADLY_FORMATTED_FUNCTION);
                 }
 
-                LambdaName name = parseLambdaName(tokens, index);
+                LambdaName name = ParseLambdaName(tokens, index);
 
                 index.value++;
                 if (!tokens[index.value].equals(Character.toString(Constants.PERIOD))) {
@@ -139,11 +147,11 @@ public class Parser {
                 }
                         
                 index.value++;
-                currentExpression = new LambdaFunction(name, ParseExpression(tokens, index, parenthesesDepth));
+                currentExpression = new LambdaFunction(name, ParseExpression(tokens, index, parenthesesDepth, resolveTerms, terms));
             } else if (token.equals(Character.toString(Constants.OPEN_PARENTHESES))) {
                 parenthesesDepth.value++;
                 index.value++;
-                LambdaExpression nextExpression = ParseExpression(tokens, index, parenthesesDepth);
+                LambdaExpression nextExpression = ParseExpression(tokens, index, parenthesesDepth, resolveTerms, terms);
                 if (nextExpression != null) {
                     if (currentExpression == null) {
                         currentExpression = nextExpression;
@@ -156,8 +164,17 @@ public class Parser {
                 parenthesesDepth.value--;
                 index.value++;
                 return currentExpression;
+            } else if(resolveTerms && termAlreadyExists(token, terms)) {
+                LambdaExpression termExpression = ExpandAllTerms(terms.get(token), terms);
+                if (currentExpression == null) {
+                    currentExpression = termExpression;
+                } else {
+                    LambdaApplication tempExpression = new LambdaApplication(currentExpression, termExpression); 
+                    currentExpression = tempExpression;
+                }
+                index.value++;
             } else {
-                LambdaName name = parseLambdaName(tokens, index);
+                LambdaName name = ParseLambdaName(tokens, index);
                 index.value++;
                 if (currentExpression == null) {
                     currentExpression = name;
@@ -171,9 +188,12 @@ public class Parser {
         return currentExpression;
     }
     
+    private static LambdaExpression ExpandAllTerms(LambdaExpression expression, Map<String, LambdaExpression> terms) {
+        return expression.DeepCloneAndExpand(terms);   
+    }
     
     // Parse a lambda name
-    private static LambdaName parseLambdaName(String[] tokens, IntRef index) throws ParseException {
+    private static LambdaName ParseLambdaName(String[] tokens, IntRef index) throws ParseException {
         String name = tokens[index.value];
         if (!isValidIdentifierName(name)) {
             throw new ParseException(String.format(Constants.ERROR_INVALID_IDENTIFIER_NAME, name));

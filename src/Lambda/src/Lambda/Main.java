@@ -7,7 +7,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Stack;
 
 /*
  * No shorthand
@@ -21,6 +23,9 @@ import java.util.Map;
  
  * Warn on terms with same alpha-equivalence? No too much work!
 
+ * Fix colour formatted output on 'TERMS' command. (equals is green, but nothing else it!)
+   (Actually, this also needs to happen for general output. e.g. beta equivalence!) 
+
  * Search for TODOs!
  */
 
@@ -28,10 +33,6 @@ public class Main {
     public static void main(String[] args) {
         // Dictionary mapping term names to their expressions
         Map<String, LambdaExpression> terms = new HashMap<String, LambdaExpression>();
-
-        //terms.put("true", new LambdaFunction(new LambdaName("x"), new LambdaFunction(new LambdaName("y"), new LambdaName("x"))));
-        //terms.put("false", new LambdaFunction(new LambdaName("x"), new LambdaFunction(new LambdaName("y"), new LambdaName("y"))));
-        //terms.put("and", new LambdaFunction(new LambdaName("a"), new LambdaFunction(new LambdaName("b"), new LambdaApplication(new LambdaApplication(new LambdaName("a"), new LambdaName("b")), new LambdaName("a")))));
                 
         // Debug flag
         boolean debugMode = false;
@@ -128,9 +129,19 @@ public class Main {
                             Console.outputToken(terms.get(termName).OutputString());
                             Console.println();
                         } else {
-                            LambdaExpression expression = Parser.StartParseExpression(tokens);
+                            LambdaExpression expression = Parser.StartParseExpression(tokens, true, terms);
+                            Console.print(Constants.BETA + Constants.PROMPT + " BEFORE: ",  Constants.PROMPT_COLOR);
+                            Console.outputToken(expression.OutputString());
+                            Console.println();                                
+                            
+                            while (expression instanceof LambdaApplication) {
+                                expression = Evaluate((LambdaApplication)expression, 0);                                
+                                Console.print(Constants.BETA + Constants.PROMPT + " AFTER: ",  Constants.PROMPT_COLOR);
+                                Console.outputToken(expression.OutputString());
+                                Console.println();
+                            }
+                            
                             Console.print(Constants.BETA + Constants.PROMPT,  Constants.PROMPT_COLOR);
-
                             Console.outputToken(expression.OutputString());
                             Console.println();
                         }
@@ -142,6 +153,57 @@ public class Main {
         } while ((!input.equals(Constants.QUIT_COMMAND)) && (!input.equals(Constants.EXIT_COMMAND)));
     }
 
+    private static String getDepth(int depth){
+        String retVal = "";
+        for (int i=0; i<depth; i++) {
+            retVal += " ";
+        }
+        return retVal;
+    }
+    
+    private static LambdaExpression Evaluate(LambdaApplication application, int depth) {
+        List<LambdaFunction> functions = new ArrayList<>();
+        List<LambdaExpression> expressions = new ArrayList<>();
+        
+        return Evaluate(application, depth, functions, expressions);
+    }
+    
+    private static LambdaExpression Evaluate(LambdaApplication application,
+                                             int depth,
+                                             List<LambdaFunction> functions,
+                                             List<LambdaExpression> expressions) {
+        //Console.outputToken(getDepth(depth) + "root: " + application.OutputString() + "\n"); 
+        LambdaExpression firstExpression = ((LambdaApplication)application).GetFirstExpression();
+        LambdaExpression secondExpression = application.GetSecondExpression();
+        
+        expressions.add(0, secondExpression);
+        
+        if (firstExpression instanceof LambdaApplication) {
+            LambdaExpression evaluated = Evaluate((LambdaApplication)firstExpression, depth + 4, functions, expressions);
+            //Console.outputToken("Making app with: " + evaluated.OutputString() + "\n");
+            //return new LambdaApplication(evaluated, ((LambdaApplication)application).GetSecondExpression());
+            return evaluated;
+        } else if (firstExpression instanceof LambdaFunction) {            
+            LambdaFunction lastFunction = (LambdaFunction)firstExpression;
+            
+            while (firstExpression instanceof LambdaFunction) {
+                lastFunction = (LambdaFunction)firstExpression; //?????
+                functions.add((LambdaFunction)firstExpression);                
+                firstExpression = ((LambdaFunction)firstExpression).GetExpression();
+            }
+            
+            //Console.outputToken(getDepth(depth) + "Applying to: " + lastFunction.OutputString());
+            
+            LambdaExpression substituted = lastFunction.GetExpression().Substitute(functions, expressions); //???
+            //LambdaExpression substituted = lastFunction.Substitute(functions, expressions);
+            //if(substituted instanceof LambdaApplication) {
+            //    return ((LambdaApplication)substituted).GetFirstExpression();
+            //}
+            return substituted;
+        }
+        return application;
+    }
+    
     // Toggle the debugMode flag and output state to stdout
     private static boolean debugCommand(boolean debugMode) {
         boolean newDebugMode = !debugMode;
@@ -187,9 +249,11 @@ public class Main {
                         } else {
                             if (Parser.IsTermDeclaration(tokens, lineNumber)) {
                                 String termName = Parser.ParseTermDeclaration(tokens, terms, warnOnRedefinition);
+                                // TODO: Maybe should output something here if DebugMode flag is on
                                 termsParsed++;
                             } else {
-                                LambdaExpression expression = Parser.StartParseExpression(tokens, new IntRef(0));
+                                LambdaExpression expression = Parser.StartParseExpression(tokens, new IntRef(0), false, terms);
+                                // TODO: Maybe should output something here if DebugMode flag is on
                                 expressionsParsed++;
                             }
                         }
