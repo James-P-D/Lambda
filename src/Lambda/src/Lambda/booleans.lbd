@@ -6,4 +6,4 @@ false = \x.\y.y
 and = \a.\b.a b a
 or = \a.\b.a a b
 not = \a.a false true
-xor = \x.\y. x (not y) y
+xor = \a.\b.a (b false true) b
