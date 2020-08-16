@@ -45,6 +45,27 @@ After running the application you will be presented with a short introductory me
 λ>
 ```
 
+We can enter lambda expressions at the `λ>` prompt, which the application will attempt to beta-reduce:
+
+```
+λ-CALCULUS: Type 'help' for more information
+λ> λx.x
+β> λx.x
+```
+
+In the above we entered the expression `λx.x` which cannot be reduced so we see the `β>` prompt followed by our initial expression.
+
+We can also create terms and then apply them:
+
+```
+λ> id=λx.x
+β> id = λx.x
+λ> id y
+β> y
+```
+
+In the above we create a term called `id` and then apply the symbol `y` to it, which gives `y`.
+
 ### Help
 
 If you enter `help` you will receive the following information:
@@ -85,6 +106,15 @@ We can load the file easily enough:
 λ> load booleans.lbd
 LOADING FILE: booleans.lbd
 LOADING FILE: booleans.lbd - 6 term(s) and 0 expression(s) parsed
+```
+
+Having loaded the file, we can now perform boolean expressions
+
+```
+λ> not true
+EXAMPLE HERE
+λ> or false true
+EXAMPLE HERE
 ```
 
 Some files may require terms which exist in *other* files. In these cases we can start the file with a `$` symbol followed by the names of other files we need to include.
@@ -137,7 +167,7 @@ For more information on building the project, see the [Building Notes and Proble
 
 ### Debug Mode
 
-You can enter `debug` to toggle debug mode:
+You can enter `debug` to toggle debug-mode:
 
 ```
 λ> debug
@@ -146,7 +176,14 @@ DEBUG: Debug mode ON
 DEBUG: Debug mode OFF
 ```
 
-Debug-mode can be useful for showing the intermediate steps during beta-reduction.
+Debug-mode can be useful for showing the intermediate steps during beta-reduction. Below is the result of beta-reducing `or false true` with debug-mode turned on:
+
+```
+λ> debug
+DEBUG: Debug mode ON
+λ> or false true
+EXAMPLE HERE
+```
 
 ### Alpha Mode
 
@@ -202,15 +239,32 @@ As already mentioned, the application comes with a number of library files which
 
 Now that we have a full understanding of Lambda-Calculus and of how the application works, we can start writing some programs.
 
-
-
 ```
-LOAD
+LOAD booleans.lbd
 λ> and true true
 true
 λ> and true false
 false
 ```
+
+```
+LOAD maths.lbd
+FILL IN HERE
+λ> add one two
+```
+
+Note that because `maths.lbd` only contains term definitions for the first ten numbers, mathematical operations which return larger numbers will be displayed in lambda-syntax:
+
+```
+LOAD maths.lbd
+FILL IN HERE
+λ> add five four
+FILL IN HERE
+λ> mult five four
+FILL IN HERE
+```
+
+
 
 
 ### Building Notes and Problems
@@ -222,7 +276,7 @@ javac -cp ..\..\libs\jna-5.5.0.jar;..\..\libs\jna-platform-5.5.0.jar;. Constants
 java -classpath "C:\Users\jdorr\Desktop\Dev\Lambda\src\Lambda\bin;..\..\libs\jna-5.5.0.jar;..\..\libs\jna-platform-5.5.0.jar" Lambda.Main C:\Users\jdorr\Desktop\Dev\Lambda\src\Lambda\src\Lambda\definitions.lbd
 ```
 
-A fair amount of work went into getting the console I/O to work and display nicely. Since Java is fussy about support single-keypress-input, displaying Unicode characters (`λ`, `α`, etc.) and using colours, we need to use a bunch of Windows-specific stuff to achieve this. If you are struggling with inputting strings, or are seeing strange, non-printable values in the output, simply set `FANCY_UI` to `false` in [Console.Java](https://github.com/James-P-D/Lambda/blob/master/src/Lambda/src/Lambda/Console.java).
+A fair amount of work went into getting the console I/O to work and display nicely. Since Java is fussy about supporting single-keypress-input, displaying Unicode characters (`λ`, `α`, etc.) and using colours, we need to use a bunch of Windows-specific stuff to achieve this. If you are struggling with inputting strings, or are seeing strange, non-printable values in the console, simply set `FANCY_UI` to `false` in [Console.Java](https://github.com/James-P-D/Lambda/blob/master/src/Lambda/src/Lambda/Console.java).
 
 ### Acknowledgements
 
