@@ -29,14 +29,17 @@ public class LambdaApplication extends LambdaExpression {
                                                          : (Constants.OPEN_PARENTHESES + secondExpression.OutputString() + Constants.CLOSE_PARENTHESES));
     }
     
-    //@Override
-    //public LambdaExpression Substitute(LambdaName replaceThis, LambdaExpression withThis) {
-    //    return new LambdaApplication(this.firstExpression.Substitute(replaceThis, withThis),
-    //                                 this.secondExpression.Substitute(replaceThis, withThis));
-    //}
+    @Override
+    public String OutputIDString() {
+        return ((firstExpression instanceof LambdaName) ? firstExpression.OutputIDString()
+                                                        : (Constants.OPEN_PARENTHESES + firstExpression.OutputIDString() + Constants.CLOSE_PARENTHESES)) +
+               Constants.SPACE +
+               ((secondExpression instanceof LambdaName) ? secondExpression.OutputIDString()
+                                                         : (Constants.OPEN_PARENTHESES + secondExpression.OutputIDString() + Constants.CLOSE_PARENTHESES));
+    }
     
     @Override
-    public LambdaExpression Substitute(List<LambdaFunction> replaceThis, List<LambdaExpression> withThis) {
+    public LambdaExpression Substitute(LambdaFunction replaceThis, LambdaExpression withThis) {
         return new LambdaApplication(this.firstExpression.Substitute(replaceThis, withThis),
                                      this.secondExpression.Substitute(replaceThis, withThis));        
     }

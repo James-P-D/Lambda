@@ -13,19 +13,27 @@ import java.util.Stack;
 
 /*
  * No shorthand
-    \a.\b.b # This is fine
-    \ab.b   # This is not, although in mathematics, its equivalent
-
+ *  \a.\b.b # This is fine
+ *  \ab.b   # This is not, although in mathematics, its equivalent
+ *
+ * \x.\y.\z a
+ * causes an error
+ *
  * Check that when declaring new terms (either through console or through
-   script file) that it doesn't clash with a reserved word (e.g. 'help', 'quit')
-
+ * script file) that it doesn't clash with a reserved word (e.g. 'help', 'quit')
+ *
  * Use alpha-equivalence to check if final value matches an existing term
- 
+ *
  * Warn on terms with same alpha-equivalence? No too much work!
-
+ *
  * Fix colour formatted output on 'TERMS' command. (equals is green, but nothing else it!)
-   (Actually, this also needs to happen for general output. e.g. beta equivalence!) 
-
+ * (Actually, this also needs to happen for general output. e.g. beta equivalence!)
+ *  
+ * Remove ExpandAllTerms() - Is it actually still used?
+ *
+ * Check everything is outputting properly with FANCY_UI turned on. Still lots of
+ * Console.print which should be something else
+ * 
  * Search for TODOs!
  */
 
@@ -97,8 +105,11 @@ public class Main {
                     if (alphas.size() < 2) {
                         DisplayMessage.Error(Constants.ERROR_MUST_PROVIDE_AT_LEAST_TWO_TERMS);
                     } else {
-                        //TODO: Alpha equivalence here
-                        Console.print(Constants.ALPHA + Constants.PROMPT, Constants.PROMPT_COLOR);
+                        if (AlphaEquivalent(alphas.get(0), alphas.subList(1, alphas.size()), terms)) {
+                            Console.print(Constants.ALPHA + Constants.PROMPT + Constants.TRUE, Constants.PROMPT_COLOR);                            
+                        } else {
+                            Console.print(Constants.ALPHA + Constants.PROMPT + Constants.FALSE, Constants.PROMPT_COLOR);                            
+                        }
                         Console.println();
                     }
                 }
@@ -129,21 +140,43 @@ public class Main {
                             Console.outputToken(terms.get(termName).OutputString());
                             Console.println();
                         } else {
+                            
                             LambdaExpression expression = Parser.StartParseExpression(tokens, true, terms);
-                            Console.print(Constants.BETA + Constants.PROMPT + " BEFORE: ",  Constants.PROMPT_COLOR);
-                            Console.outputToken(expression.OutputString());
-                            Console.println();                                
-                            
-                            while (expression instanceof LambdaApplication) {
-                                expression = Evaluate((LambdaApplication)expression, 0);                                
-                                Console.print(Constants.BETA + Constants.PROMPT + " AFTER: ",  Constants.PROMPT_COLOR);
-                                Console.outputToken(expression.OutputString());
-                                Console.println();
-                            }
-                            
                             Console.print(Constants.BETA + Constants.PROMPT,  Constants.PROMPT_COLOR);
                             Console.outputToken(expression.OutputString());
+                            Console.println();                                
+                            Console.print(Constants.BETA + Constants.PROMPT,  Constants.PROMPT_COLOR);
+                            Console.outputToken(expression.OutputIDString());
+                            Console.println();                                
+                            Console.println();                                
+                            
+                            int counter = 0;
+                            while (expression instanceof LambdaApplication) {
+                                expression = Evaluate((LambdaApplication)expression);                                
+                                Console.print(Constants.BETA + Constants.PROMPT,  Constants.PROMPT_COLOR);
+                                Console.outputToken(expression.OutputString());
+                                Console.println();
+                                Console.print(Constants.BETA + Constants.PROMPT,  Constants.PROMPT_COLOR);
+                                Console.outputToken(expression.OutputIDString());
+                                Console.println();                                
+                                Console.println();                                
+
+                                counter++;
+                                if (counter > Constants.MAX_EVALUATION_LOOP) {
+                                    Console.outputToken("Breaking loop\n");
+                                    break;
+                                }
+                            }
+                            String alphaEquivalentTerm = AlphaEquivalentTerm(expression, terms);
+                            if (alphaEquivalentTerm == null) {
+                                Console.print(Constants.BETA + Constants.PROMPT, Constants.PROMPT_COLOR);
+                                Console.outputToken(expression.OutputString());
+                            } else {
+                                Console.print(Constants.BETA + Constants.PROMPT, Constants.PROMPT_COLOR);
+                                Console.outputToken(alphaEquivalentTerm);
+                            }
                             Console.println();
+                            
                         }
                     }
                 } catch (ParseException e) {
@@ -153,52 +186,52 @@ public class Main {
         } while ((!input.equals(Constants.QUIT_COMMAND)) && (!input.equals(Constants.EXIT_COMMAND)));
     }
 
-    private static String getDepth(int depth){
-        String retVal = "";
-        for (int i=0; i<depth; i++) {
-            retVal += " ";
+    private static boolean AlphaEquivalent(String first, List<String> remaining, Map<String, LambdaExpression> terms) {
+        try {
+            boolean alphaEquivalent = true;
+            String[] firstTokens = Tokeniser.Tokenise(first);
+            LambdaExpression firstExpression = Parser.StartParseExpression(firstTokens, true, terms);
+            String firstExpressionIDString = firstExpression.OutputIDString();
+            
+            for(int i = 0; i < remaining.size(); i++) {
+                String[] nextTokens = Tokeniser.Tokenise(remaining.get(i));
+                LambdaExpression nextExpression = Parser.StartParseExpression(nextTokens, true, terms);
+                String nextExpressionIDString = nextExpression.OutputIDString();
+                if (!firstExpressionIDString.equals(nextExpressionIDString)) {
+                    alphaEquivalent = false;
+                    break;
+                }
+            }
+            return alphaEquivalent;                     
+        } catch (ParseException e) {
+            DisplayMessage.Error(Constants.ERROR_PARSE_EXCEPTION, e);
+            return false;
+        }        
+    }
+    
+    private static String AlphaEquivalentTerm(LambdaExpression expression, Map<String, LambdaExpression> terms) {
+        String originalExpressionString = expression.OutputIDString();
+        for(Map.Entry<String, LambdaExpression> term : terms.entrySet()) {
+            LambdaExpression termExpression = term.getValue();
+            String termExpressionString = termExpression.OutputIDString();
+            if (originalExpressionString.equals(termExpressionString)) {
+                return term.getKey();
+            }
         }
-        return retVal;
+        return null;
     }
     
-    private static LambdaExpression Evaluate(LambdaApplication application, int depth) {
-        List<LambdaFunction> functions = new ArrayList<>();
-        List<LambdaExpression> expressions = new ArrayList<>();
-        
-        return Evaluate(application, depth, functions, expressions);
-    }
-    
-    private static LambdaExpression Evaluate(LambdaApplication application,
-                                             int depth,
-                                             List<LambdaFunction> functions,
-                                             List<LambdaExpression> expressions) {
-        //Console.outputToken(getDepth(depth) + "root: " + application.OutputString() + "\n"); 
+    private static LambdaExpression Evaluate(LambdaApplication application) {
         LambdaExpression firstExpression = ((LambdaApplication)application).GetFirstExpression();
         LambdaExpression secondExpression = application.GetSecondExpression();
         
-        expressions.add(0, secondExpression);
-        
         if (firstExpression instanceof LambdaApplication) {
-            LambdaExpression evaluated = Evaluate((LambdaApplication)firstExpression, depth + 4, functions, expressions);
-            //Console.outputToken("Making app with: " + evaluated.OutputString() + "\n");
-            //return new LambdaApplication(evaluated, ((LambdaApplication)application).GetSecondExpression());
-            return evaluated;
+            LambdaExpression evaluated = Evaluate((LambdaApplication)firstExpression);
+            return new LambdaApplication(evaluated, secondExpression);
         } else if (firstExpression instanceof LambdaFunction) {            
             LambdaFunction lastFunction = (LambdaFunction)firstExpression;
             
-            while (firstExpression instanceof LambdaFunction) {
-                lastFunction = (LambdaFunction)firstExpression; //?????
-                functions.add((LambdaFunction)firstExpression);                
-                firstExpression = ((LambdaFunction)firstExpression).GetExpression();
-            }
-            
-            //Console.outputToken(getDepth(depth) + "Applying to: " + lastFunction.OutputString());
-            
-            LambdaExpression substituted = lastFunction.GetExpression().Substitute(functions, expressions); //???
-            //LambdaExpression substituted = lastFunction.Substitute(functions, expressions);
-            //if(substituted instanceof LambdaApplication) {
-            //    return ((LambdaApplication)substituted).GetFirstExpression();
-            //}
+            LambdaExpression substituted = lastFunction.GetExpression().Substitute(lastFunction, secondExpression);
             return substituted;
         }
         return application;

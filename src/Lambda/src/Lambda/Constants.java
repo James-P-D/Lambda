@@ -3,6 +3,10 @@ package Lambda;
 import java.util.ArrayList;
 
 public class Constants {
+    // Max evaluations.
+    // TODO: Replace with check on result of evaluation equalling original evaluation.
+    public static final int MAX_EVALUATION_LOOP                          = 10;
+    
     // Symbols we will split on
     public static final char INCLUDE_FILE                                = '$';
     public static final char COMMENT                                     = '#';
@@ -62,6 +66,8 @@ public class Constants {
     public static final String PROMPT                                    = "> ";
     public static final String ON                                        = "ON";
     public static final String OFF                                       = "OFF";
+    public static final String FALSE                                     = "FALSE";
+    public static final String TRUE                                      = "TRUE";
     public static final String DEBUG_MODE                                = "Debug mode %s";
     public static final String QUITTING                                  = "QUITTING";
     public static final String QUIT_MESSAGE                              = "Bye!";
@@ -105,6 +111,7 @@ public class Constants {
     // Warning messages
     public static final String WARNING_TERM_ALREADY_DEFINED              = "Term already defined: %s";
     public static final String WARNING_FILE_CONTAINS_NOTHING             = "%s - Contains no terms or expressions";
+    public static final String WARNING_VARIABLE_UNBOUND                  = "Variable unbound: %s";
     
     // All commands. Users cannot create terms called 'help', 'load', etc.
     public static final ArrayList<String> reservedWords                  = new ArrayList<String>() {{

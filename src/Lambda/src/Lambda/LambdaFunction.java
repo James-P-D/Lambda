@@ -25,30 +25,17 @@ public class LambdaFunction extends LambdaExpression {
         return Character.toString(Constants.LAMBDA) + this.name.OutputString() + Character.toString(Constants.PERIOD) + this.expression.OutputString();
     }
 
-    /*
     @Override
-    public LambdaExpression Substitute(LambdaName replaceThis, LambdaExpression withThis) {
-        if (this.name.GetName().equals(replaceThis.GetName())) {
-            return expression.Substitute(replaceThis, withThis);
-        } else {
-            return new LambdaFunction((LambdaName)this.name.DeepClone(), this.expression.Substitute(replaceThis, withThis));
-        }
-    }*/
+    public String OutputIDString() {
+        return Character.toString(Constants.LAMBDA) + this.name.OutputIDString() + Character.toString(Constants.PERIOD) + this.expression.OutputIDString();
+    }
     
     @Override
-    public LambdaExpression Substitute(List<LambdaFunction> replaceThis, List<LambdaExpression> withThis) {
-        int index = -1;
-        for(int i = 0; i < replaceThis.size(); i++) {
-            if (replaceThis.get(i).GetName().GetName().equals(this.name.GetName())) {
-                index = i;
-                break;
-            }
-        }
-        
-        if (index == -1) {
-            return new LambdaFunction((LambdaName)this.name.DeepClone(), this.expression.Substitute(replaceThis, withThis));
-        } else {
+    public LambdaExpression Substitute(LambdaFunction replaceThis, LambdaExpression withThis) {
+        if (replaceThis.GetName().GetID() == this.GetName().GetID()) {
             return expression.Substitute(replaceThis, withThis);
+        } else {
+            return new LambdaFunction((LambdaName)this.name.DeepClone(), this.expression.Substitute(replaceThis, withThis));
         }
     }
      

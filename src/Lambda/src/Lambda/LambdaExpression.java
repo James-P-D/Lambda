@@ -6,8 +6,10 @@ import java.util.Map;
 // Base class for all Lambda classes
 abstract class LambdaExpression {
     public abstract String OutputString();
-    
-    public abstract LambdaExpression Substitute(List<LambdaFunction> replaceThis, List<LambdaExpression> withThis);
+
+    public abstract String OutputIDString();
+
+    public abstract LambdaExpression Substitute(LambdaFunction replaceThis, LambdaExpression withThis);
     
     public abstract LambdaExpression DeepClone();
     
