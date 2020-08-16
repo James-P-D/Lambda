@@ -224,10 +224,6 @@ public class Parser {
         return currentExpression;
     }
     
-    private static LambdaExpression ExpandAllTerms(LambdaExpression expression, Map<String, LambdaExpression> terms) {
-        return expression.DeepCloneAndExpand(terms);   
-    }
-    
     // Parse a lambda name
     private static LambdaName ParseLambdaName(String[] tokens,
                                               IntRef index,

@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Stack;
 
 /*
  * No shorthand
@@ -281,12 +280,10 @@ public class Main {
                             }
                         } else {
                             if (Parser.IsTermDeclaration(tokens, lineNumber)) {
-                                String termName = Parser.ParseTermDeclaration(tokens, terms, warnOnRedefinition);
-                                // TODO: Maybe should output something here if DebugMode flag is on
+                                Parser.ParseTermDeclaration(tokens, terms, warnOnRedefinition);
                                 termsParsed++;
                             } else {
-                                LambdaExpression expression = Parser.StartParseExpression(tokens, new IntRef(0), false, terms);
-                                // TODO: Maybe should output something here if DebugMode flag is on
+                                Parser.StartParseExpression(tokens, new IntRef(0), false, terms);
                                 expressionsParsed++;
                             }
                         }
