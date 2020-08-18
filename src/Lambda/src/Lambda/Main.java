@@ -18,18 +18,9 @@ import java.util.Map;
  * \x.\y.\z a
  * causes an error
  *
- * Check that when declaring new terms (either through console or through
- * script file) that it doesn't clash with a reserved word (e.g. 'help', 'quit')
- *
- * Use alpha-equivalence to check if final value matches an existing term
- *
- * Warn on terms with same alpha-equivalence? No too much work!
- *
  * Fix colour formatted output on 'TERMS' command. (equals is green, but nothing else it!)
  * (Actually, this also needs to happen for general output. e.g. beta equivalence!)
  *  
- * Remove ExpandAllTerms() - Is it actually still used?
- *
  * Check everything is outputting properly with FANCY_UI turned on. Still lots of
  * Console.print which should be something else
  * 
@@ -132,50 +123,44 @@ public class Main {
                             String termName = Parser.ParseTermDeclaration(tokens, terms, true);
                             Console.print(Constants.BETA + Constants.PROMPT,  Constants.PROMPT_COLOR);
                             
-                            Console.outputToken(termName);
-                            Console.outputToken(Character.toString(Constants.SPACE));
+                            formattedOutput(termName);
+                            Console.print(Character.toString(Constants.SPACE));
                             Console.outputToken(Character.toString(Constants.EQUALS));
-                            Console.outputToken(Character.toString(Constants.SPACE));
-                            Console.outputToken(terms.get(termName).OutputString());
+                            Console.print(Character.toString(Constants.SPACE));
+                            formattedOutput(terms.get(termName).OutputString());
                             Console.println();
-                        } else {
-                            
+                        } else {                            
                             LambdaExpression expression = Parser.StartParseExpression(tokens, true, terms);
-                            Console.print(Constants.BETA + Constants.PROMPT,  Constants.PROMPT_COLOR);
-                            Console.outputToken(expression.OutputString());
-                            Console.println();                                
-                            Console.print(Constants.BETA + Constants.PROMPT,  Constants.PROMPT_COLOR);
-                            Console.outputToken(expression.OutputIDString());
-                            Console.println();                                
-                            Console.println();                                
                             
-                            int counter = 0;
-                            while (expression instanceof LambdaApplication) {
-                                expression = Evaluate((LambdaApplication)expression);                                
-                                Console.print(Constants.BETA + Constants.PROMPT,  Constants.PROMPT_COLOR);
-                                Console.outputToken(expression.OutputString());
-                                Console.println();
-                                Console.print(Constants.BETA + Constants.PROMPT,  Constants.PROMPT_COLOR);
-                                Console.outputToken(expression.OutputIDString());
+                            if (debugMode) {
+                                Console.print(Constants.BETA + Constants.PROMPT, Constants.PROMPT_COLOR);
+                                formattedOutput(expression.OutputString());
                                 Console.println();                                
-                                Console.println();                                
-
-                                counter++;
-                                if (counter > Constants.MAX_EVALUATION_LOOP) {
-                                    Console.outputToken("Breaking loop\n");
-                                    break;
-                                }
                             }
-                            String alphaEquivalentTerm = AlphaEquivalentTerm(expression, terms);
+                            
+                            BoolRef updated = new BoolRef(false);
+                            do {
+                                updated.value = false;
+                                expression = Evaluate(expression, updated);      
+
+                                if (debugMode && updated.value) {
+                                    Console.print(Constants.BETA + Constants.PROMPT,  Constants.PROMPT_COLOR);
+                                    formattedOutput(expression.OutputString());
+                                    Console.println();
+                                }
+                                
+                                //expression = Parser.StartParseExpression(Tokeniser.Tokenise(expression.OutputString()), true, terms);
+                            } while (updated.value);
+                            
+                            String alphaEquivalentTerm = AlphaEquivalentTerm(expression.OutputString(), terms);
                             if (alphaEquivalentTerm == null) {
                                 Console.print(Constants.BETA + Constants.PROMPT, Constants.PROMPT_COLOR);
-                                Console.outputToken(expression.OutputString());
+                                formattedOutput(expression.OutputString());
                             } else {
                                 Console.print(Constants.BETA + Constants.PROMPT, Constants.PROMPT_COLOR);
-                                Console.outputToken(alphaEquivalentTerm);
+                                formattedOutput(alphaEquivalentTerm);
                             }
-                            Console.println();
-                            
+                            Console.println();                            
                         }
                     }
                 } catch (ParseException e) {
@@ -208,32 +193,47 @@ public class Main {
         }        
     }
     
-    private static String AlphaEquivalentTerm(LambdaExpression expression, Map<String, LambdaExpression> terms) {
-        String originalExpressionString = expression.OutputIDString();
-        for(Map.Entry<String, LambdaExpression> term : terms.entrySet()) {
-            LambdaExpression termExpression = term.getValue();
-            String termExpressionString = termExpression.OutputIDString();
-            if (originalExpressionString.equals(termExpressionString)) {
-                return term.getKey();
+    private static String AlphaEquivalentTerm(String expressionStr, Map<String, LambdaExpression> terms) {
+        try {
+            LambdaExpression expression = Parser.StartParseExpression(Tokeniser.Tokenise(expressionStr), true, terms);
+            String originalExpressionString = expression.OutputIDString();
+            for(Map.Entry<String, LambdaExpression> term : terms.entrySet()) {
+                LambdaExpression termExpression = term.getValue();
+                String termExpressionString = termExpression.OutputIDString();
+                if (originalExpressionString.equals(termExpressionString)) {
+                    return term.getKey();
+                }
             }
+
+        } catch (ParseException e) {
+            return null;
         }
         return null;
     }
     
-    private static LambdaExpression Evaluate(LambdaApplication application) {
-        LambdaExpression firstExpression = ((LambdaApplication)application).GetFirstExpression();
-        LambdaExpression secondExpression = application.GetSecondExpression();
-        
-        if (firstExpression instanceof LambdaApplication) {
-            LambdaExpression evaluated = Evaluate((LambdaApplication)firstExpression);
-            return new LambdaApplication(evaluated, secondExpression);
-        } else if (firstExpression instanceof LambdaFunction) {            
-            LambdaFunction lastFunction = (LambdaFunction)firstExpression;
+    private static LambdaExpression Evaluate(LambdaExpression expression, BoolRef updated) {
+        if (expression instanceof LambdaApplication){
+            LambdaApplication application = (LambdaApplication)expression;
+            LambdaExpression firstExpression = application.GetFirstExpression();
+            LambdaExpression secondExpression = application.GetSecondExpression();
             
-            LambdaExpression substituted = lastFunction.GetExpression().Substitute(lastFunction, secondExpression);
-            return substituted;
+            if (firstExpression instanceof LambdaFunction) {
+                LambdaFunction lastFunction = (LambdaFunction)firstExpression;
+                LambdaExpression substituted = lastFunction.GetExpression().Substitute(lastFunction, secondExpression);
+                updated.value = true;
+                return substituted;
+            }
+            else
+            {
+                return (LambdaExpression)(new LambdaApplication(Evaluate(firstExpression, updated),
+                                                                Evaluate(secondExpression, updated)));
+            }
+        } else if (expression instanceof LambdaFunction) {
+            LambdaFunction function = (LambdaFunction)expression;
+            return (LambdaExpression)(new LambdaFunction((LambdaName)function.GetName().DeepClone(), Evaluate(function.GetExpression(), updated)));
         }
-        return application;
+
+        return expression.DeepClone();
     }
     
     // Toggle the debugMode flag and output state to stdout
@@ -313,11 +313,11 @@ public class Main {
         for(Map.Entry<String, LambdaExpression> term : terms.entrySet()) {
             String termName = term.getKey();
             LambdaExpression termExpression = term.getValue();
-            Console.outputToken(termName);
-            Console.outputToken(Character.toString(Constants.SPACE));
-            Console.outputToken(Character.toString(Constants.EQUALS));
-            Console.outputToken(Character.toString(Constants.SPACE));
-            Console.outputToken(termExpression.OutputString());
+            formattedOutput(termName);
+            Console.print(Character.toString(Constants.SPACE));
+            formattedOutput(Character.toString(Constants.EQUALS));
+            Console.print(Character.toString(Constants.SPACE));
+            formattedOutput(termExpression.OutputString());
             Console.println();
             termsFound++;
         }
@@ -334,15 +334,20 @@ public class Main {
         }
     }
 
-  /*  
-    private static void parseAndOutput(String input){
-        Console.print(Constants.LAMBDA + Constants.PROMPT, Constants.PROMPT_COLOR);
+    // TODO: Move this to Console?
+    private static void formattedOutput(String input) {
+        //Console.print(Constants.LAMBDA + Constants.PROMPT, Constants.PROMPT_COLOR);
         String[] tokens = Tokeniser.Tokenise(input);
         for (int i = 0; i < tokens.length; i++) {
-            String token = tokens[i];
-            Console.outputToken(token);
+            String currentToken = tokens[i];
+            if (i>0) {
+                String prevToken = tokens[i - 1];
+                if (Parser.isValidIdentifierName(prevToken) && Parser.isValidIdentifierName(currentToken)) {
+                    Console.print(" ");
+                }
+            }
+            
+            Console.outputToken(currentToken);
         }
-        Console.println();
     }
-*/
 }

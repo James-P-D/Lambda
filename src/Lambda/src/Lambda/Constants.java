@@ -3,10 +3,6 @@ package Lambda;
 import java.util.ArrayList;
 
 public class Constants {
-    // Max evaluations.
-    // TODO: Replace with check on result of evaluation equalling original evaluation.
-    public static final int MAX_EVALUATION_LOOP                          = 10;
-    
     // Symbols we will split on
     public static final char INCLUDE_FILE                                = '$';
     public static final char COMMENT                                     = '#';

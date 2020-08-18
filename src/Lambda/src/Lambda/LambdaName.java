@@ -29,18 +29,6 @@ public class LambdaName extends LambdaExpression {
         return Integer.toString(this.id);
     }
     
-    
-    /*
-    @Override
-    public LambdaExpression Substitute(LambdaName replaceThis, LambdaExpression withThis) {
-        if (this.name.equals(replaceThis.GetName())) {
-            return withThis.DeepClone();
-        } else {
-            return this.DeepClone();
-        }
-    }
-    */
-    
     @Override
     public LambdaExpression Substitute(LambdaFunction replaceThis, LambdaExpression withThis) {
         if(replaceThis.GetName().GetID() == this.id) {

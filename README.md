@@ -231,7 +231,7 @@ As already mentioned, the application comes with a number of library files which
 * [booleans.lbd](https://github.com/James-P-D/Lambda/blob/master/src/Lambda/src/Lambda/booleans.lbd) - True, false, and, or, etc.
 * [maths.lbd](https://github.com/James-P-D/Lambda/blob/master/src/Lambda/src/Lambda/maths.lbd) - Numbers 1-10, add, subtract, etc.
 * [conditionals.lbd](https://github.com/James-P-D/Lambda/blob/master/src/Lambda/src/Lambda/conditionals.lbd) - If..then..else, equality, greater-than-or-equal, etc.
-* [tuple.lbd](https://github.com/James-P-D/Lambda/blob/master/src/Lambda/src/Lambda/tuples.lbd) - Pairs of values.
+* [tuples.lbd](https://github.com/James-P-D/Lambda/blob/master/src/Lambda/src/Lambda/tuples.lbd) - Pairs of values.
 * [lists.lbd](https://github.com/James-P-D/Lambda/blob/master/src/Lambda/src/Lambda/lists.lbd) - Head, tail, etc.
 * [functions.lbd](https://github.com/James-P-D/Lambda/blob/master/src/Lambda/src/Lambda/functions.lbd) - Recursion, etc.
 

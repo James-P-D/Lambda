@@ -5,7 +5,7 @@ import java.util.Map;
 
 public class Parser {
     // Check if string is a valid identifier name
-    private static boolean isValidIdentifierName(String name) {
+    public static boolean isValidIdentifierName(String name) {
         String validFirstCharacter = "abcdefghijklmnopqrstuvwxyz_";
         String validRestCharacters = validFirstCharacter + "0123456789"; 
         
@@ -200,8 +200,6 @@ public class Parser {
                                                                   existingNames,
                                                                   true,
                                                                   terms);
-                //LambdaExpression termExpression = ExpandAllTerms(terms.get(token), terms);
-                        
                 if (currentExpression == null) {
                     currentExpression = termExpression;
                 } else {
