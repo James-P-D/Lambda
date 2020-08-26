@@ -112,9 +112,9 @@ Having loaded the file, we can now perform boolean expressions
 
 ```
 λ> not true
-EXAMPLE HERE
+β> false
 λ> or false true
-EXAMPLE HERE
+β> true
 ```
 
 Some files may require terms which exist in *other* files. In these cases we can start the file with a `$` symbol followed by the names of other files we need to include.
@@ -157,13 +157,7 @@ LOADING FILE: maths.lbd - 18 term(s) and 0 expression(s) parsed
 
 As soon as we start loading the terms in `maths.lbd`, the application finds the line `$ booleans.lbd` and knows it needs to import the terms from that file otherwise there would be errors when we encounter terms like `true` and `false` which are used in `maths.lbd`.
 
-Finally, it is also possible to load files on startup by passing the filenames as a parameters to the .class file:
-
-```
-EXAMPLE GOES HERE
-```
-
-For more information on building the project, see the [Building Notes and Problems](#Building-Notes-and-Problems) section.
+Finally, it is also possible to load files on startup by passing filenames as parameters to the .class file. For more information on building the project, see the [Building Notes and Problems](#Building-Notes-and-Problems) section.
 
 ### Debug Mode
 
@@ -182,7 +176,12 @@ Debug-mode can be useful for showing the intermediate steps during beta-reductio
 λ> debug
 DEBUG: Debug mode ON
 λ> or false true
-EXAMPLE HERE
+β> ((λa.λb.(a(λx.λy.x))b)(λx.λy.y))(λx.λy.x)
+β> (λb.((λx.λy.y)(λx.λy.x))b)(λx.λy.x)
+β> ((λx.λy.y)(λx.λy.x))(λx.λy.x)
+β> (λy.y)(λx.λy.x)
+β> λx.λy.x
+β> true
 ```
 
 ### Alpha Mode
@@ -230,8 +229,8 @@ As already mentioned, the application comes with a number of library files which
 
 * [booleans.lbd](https://github.com/James-P-D/Lambda/blob/master/src/Lambda/src/Lambda/booleans.lbd) - True, false, and, or, etc.
 * [maths.lbd](https://github.com/James-P-D/Lambda/blob/master/src/Lambda/src/Lambda/maths.lbd) - Numbers 1-10, add, subtract, etc.
-* [conditionals.lbd](https://github.com/James-P-D/Lambda/blob/master/src/Lambda/src/Lambda/conditionals.lbd) - If..then..else, equality, greater-than-or-equal, etc.
 * [tuples.lbd](https://github.com/James-P-D/Lambda/blob/master/src/Lambda/src/Lambda/tuples.lbd) - Pairs of values.
+* [conditionals.lbd](https://github.com/James-P-D/Lambda/blob/master/src/Lambda/src/Lambda/conditionals.lbd) - If..then..else, equality, greater-than-or-equal, etc.
 * [lists.lbd](https://github.com/James-P-D/Lambda/blob/master/src/Lambda/src/Lambda/lists.lbd) - Head, tail, etc.
 * [functions.lbd](https://github.com/James-P-D/Lambda/blob/master/src/Lambda/src/Lambda/functions.lbd) - Recursion, etc.
 
@@ -239,44 +238,88 @@ As already mentioned, the application comes with a number of library files which
 
 Now that we have a full understanding of Lambda-Calculus and of how the application works, we can start writing some programs.
 
-```
-LOAD booleans.lbd
-λ> and true true
-true
-λ> and true false
-false
-```
+After loading `booleans.lbd` we can perform `and`, `or` and `not` operations:
 
 ```
-LOAD maths.lbd
-FILL IN HERE
+λ> load booleans.lbd
+λ> not true
+β> false
+λ> and true false
+β> false
+λ> or true false
+β> true
+```
+
+After loading `maths.lbd` we can perform basic mathematical operations:
+
+```
+λ> load maths.lbd
 λ> add one two
+β> three
+λ> mult two two
+β> four
+λ> succ one
+β> two
+λ> succ (succ one)
+β> three
 ```
 
 Note that because `maths.lbd` only contains term definitions for the first ten numbers, mathematical operations which return larger numbers will be displayed in lambda-syntax:
 
 ```
-LOAD maths.lbd
-FILL IN HERE
-λ> add five four
-FILL IN HERE
-λ> mult five four
-FILL IN HERE
+λ> load maths.lbd
+λ> add nine nine
+β> λf.λa.f(f(f(f(f(f(f(f(f(f(f(f(f(f(f(f(f(f a)))))))))))))))))
 ```
 
+After loading `tuples.lbd` we can create pairs of values:
 
+```
+λ> load maths.lbd
+λ> load tuples.lbd
+λ> first (pair one two)
+β> one
+λ> second (pair one two)
+β> two
+```
 
+We can even have pairs of pairs:
+
+```
+λ> second (pair one (pair two three))
+β> λf.(f(λf.λa.f(f a)))(λf.λa.f(f(f a)))
+```
+
+The application is unable to resolve multiple-terms, but if we check what the expected answer (`pair two three`) is in lambda-syntax, we can see that the lambda sequences matches:
+
+```
+λ> pair two three
+β> λf.(f(λf.λa.f(f a)))(λf.λa.f(f(f a)))
+```
+
+After loading `conditionals.lbd` we can check for equality with `if_then_else`:
+
+```
+λ> if_then_else true one two
+β> one
+λ> if_then_else false one two
+β> two
+```
 
 ### Building Notes and Problems
 
 The building instructions can be found [runlambda.bat](https://github.com/James-P-D/Lambda/blob/master/src/Lambda/src/Lambda/runlambda.bat) and are also included below:
 
 ```
-javac -cp ..\..\libs\jna-5.5.0.jar;..\..\libs\jna-platform-5.5.0.jar;. Constants.java Console.java Tokeniser.java RawConsoleInput.java -encoding utf8 Main.java
-java -classpath "C:\Users\jdorr\Desktop\Dev\Lambda\src\Lambda\bin;..\..\libs\jna-5.5.0.jar;..\..\libs\jna-platform-5.5.0.jar" Lambda.Main C:\Users\jdorr\Desktop\Dev\Lambda\src\Lambda\src\Lambda\definitions.lbd
+UPDATE HERE
+UPDATE HERE
+UPDATE HERE
+UPDATE HERE
+UPDATE HERE
+UPDATE HERE
 ```
 
-A fair amount of work went into getting the console I/O to work and display nicely. Since Java is fussy about supporting single-keypress-input, displaying Unicode characters (`λ`, `α`, etc.) and using colours, we need to use a bunch of Windows-specific stuff to achieve this. If you are struggling with inputting strings, or are seeing strange, non-printable values in the console, simply set `FANCY_UI` to `false` in [Console.Java](https://github.com/James-P-D/Lambda/blob/master/src/Lambda/src/Lambda/Console.java).
+A fair amount of work went into getting the console I/O to work and display nicely. Since Java is fussy about supporting single-keypress-input, displaying Unicode characters (`λ`, `α`, `β` etc.) and using colours, we need to use a bunch of Windows-specific stuff to achieve this. If you are struggling with inputting strings, or are seeing strange, non-printable values in the console, simply set `FANCY_UI` to `false` in [Console.Java](https://github.com/James-P-D/Lambda/blob/master/src/Lambda/src/Lambda/Console.java).
 
 ### Acknowledgements
 
