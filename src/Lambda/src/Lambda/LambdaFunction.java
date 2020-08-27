@@ -34,10 +34,7 @@ public class LambdaFunction extends LambdaExpression {
         if (replaceThis.GetName().GetID() == this.GetName().GetID()) {
             return expression.Substitute(replaceThis, withThis);
         } else {
-//TODO: cleanup
-            LambdaExpression subst = this.expression.Substitute(replaceThis, withThis);
-            //Console.println("subst     : " + subst.OutputString());
-            return new LambdaFunction((LambdaName)this.name.DeepClone(), subst);
+            return new LambdaFunction((LambdaName)this.name.DeepClone(), this.expression.Substitute(replaceThis, withThis));
         }
     }
      
