@@ -18,6 +18,8 @@ import java.util.Map;
  * \x.\y.\z a
  * causes an error
  *
+ * Need to check replacing on terms within terms. What about recursion!!!
+ * 
  * Fix colour formatted output on 'TERMS' command. (equals is green, but nothing else it!)
  * (Actually, this also needs to happen for general output. e.g. beta equivalence!)
  *  
@@ -25,6 +27,9 @@ import java.util.Map;
  * Console.print which should be something else
  * 
  * Search for TODOs!
+ * 
+ * https://github.com/sjsyrek/malc is useful
+ * https://www.cs.cornell.edu/courses/cs3110/2008fa/recitations/rec26.html so's this
  */
 
 public class Main {
@@ -40,6 +45,8 @@ public class Main {
 
         // Load any script files passed as arguments to application
         parseArguments(args, terms);
+
+        runTests(terms);
         
         String input = "";
         do {            
@@ -130,28 +137,7 @@ public class Main {
                             formattedOutput(terms.get(termName).OutputString());
                             Console.println();
                         } else {                            
-                            LambdaExpression expression = Parser.StartParseExpression(tokens, true, terms);
-                            
-                            if (debugMode) {
-                                Console.print(Constants.BETA + Constants.PROMPT, Constants.PROMPT_COLOR);
-                                formattedOutput(expression.OutputString());
-                                Console.println();                                
-                            }
-                            
-                            BoolRef updated = new BoolRef(false);
-                            do {
-                                updated.value = false;
-                                expression = Evaluate(expression, updated);      
-
-                                if (debugMode && updated.value) {
-                                    Console.print(Constants.BETA + Constants.PROMPT,  Constants.PROMPT_COLOR);
-                                    formattedOutput(expression.OutputString());
-                                    Console.println();
-                                }
-                                
-                                //expression = Parser.StartParseExpression(Tokeniser.Tokenise(expression.OutputString()), true, terms);
-                            } while (updated.value);
-                            
+                            LambdaExpression expression = Evaluate(tokens, debugMode, terms);
                             String alphaEquivalentTerm = AlphaEquivalentTerm(expression.OutputString(), terms);
                             if (alphaEquivalentTerm == null) {
                                 Console.print(Constants.BETA + Constants.PROMPT, Constants.PROMPT_COLOR);
@@ -169,7 +155,58 @@ public class Main {
             }
         } while ((!input.equals(Constants.QUIT_COMMAND)) && (!input.equals(Constants.EXIT_COMMAND)));
     }
+    
+    private static LambdaExpression Evaluate(String[] tokens, boolean debugMode, Map<String, LambdaExpression> terms) throws ParseException {
+        LambdaExpression expression = Parser.StartParseExpression(tokens, true, terms);
+        
+        if (debugMode) {
+            Console.print(Constants.BETA + Constants.PROMPT, Constants.PROMPT_COLOR);
+            formattedOutput(expression.OutputString());
+            Console.println();                                
+        }
+        
+        BoolRef updated = new BoolRef(false);
+        do {
+            updated.value = false;
+            expression = Evaluate(expression, updated);      
 
+            if (debugMode && updated.value) {
+                Console.print(Constants.BETA + Constants.PROMPT,  Constants.PROMPT_COLOR);
+                formattedOutput(expression.OutputString());
+                Console.println();
+            }
+            
+            //expression = Parser.StartParseExpression(Tokeniser.Tokenise(expression.OutputString()), true, terms);
+        } while (updated.value);
+        
+        return expression;
+    }
+
+    private static LambdaExpression Evaluate(LambdaExpression expression, BoolRef updated) {
+        if (expression instanceof LambdaApplication){
+            LambdaApplication application = (LambdaApplication)expression;
+            LambdaExpression firstExpression = application.GetFirstExpression();
+            LambdaExpression secondExpression = application.GetSecondExpression();
+            
+            if (firstExpression instanceof LambdaFunction) {
+                LambdaFunction lastFunction = (LambdaFunction)firstExpression;
+                LambdaExpression substituted = lastFunction.GetExpression().Substitute(lastFunction, secondExpression);
+                updated.value = true;
+                return substituted;
+            }
+            else
+            {
+                return (LambdaExpression)(new LambdaApplication(Evaluate(firstExpression, updated),
+                                                                Evaluate(secondExpression, updated)));
+            }
+        } else if (expression instanceof LambdaFunction) {
+            LambdaFunction function = (LambdaFunction)expression;
+            return (LambdaExpression)(new LambdaFunction((LambdaName)function.GetName().DeepClone(), Evaluate(function.GetExpression(), updated)));
+        }
+
+        return expression.DeepClone();
+    }
+    
     private static boolean AlphaEquivalent(String first, List<String> remaining, Map<String, LambdaExpression> terms) {
         try {
             boolean alphaEquivalent = true;
@@ -209,31 +246,6 @@ public class Main {
             return null;
         }
         return null;
-    }
-    
-    private static LambdaExpression Evaluate(LambdaExpression expression, BoolRef updated) {
-        if (expression instanceof LambdaApplication){
-            LambdaApplication application = (LambdaApplication)expression;
-            LambdaExpression firstExpression = application.GetFirstExpression();
-            LambdaExpression secondExpression = application.GetSecondExpression();
-            
-            if (firstExpression instanceof LambdaFunction) {
-                LambdaFunction lastFunction = (LambdaFunction)firstExpression;
-                LambdaExpression substituted = lastFunction.GetExpression().Substitute(lastFunction, secondExpression);
-                updated.value = true;
-                return substituted;
-            }
-            else
-            {
-                return (LambdaExpression)(new LambdaApplication(Evaluate(firstExpression, updated),
-                                                                Evaluate(secondExpression, updated)));
-            }
-        } else if (expression instanceof LambdaFunction) {
-            LambdaFunction function = (LambdaFunction)expression;
-            return (LambdaExpression)(new LambdaFunction((LambdaName)function.GetName().DeepClone(), Evaluate(function.GetExpression(), updated)));
-        }
-
-        return expression.DeepClone();
     }
     
     // Toggle the debugMode flag and output state to stdout
@@ -348,6 +360,29 @@ public class Main {
             }
             
             Console.outputToken(currentToken);
+        }
+    }
+    
+    private static void runTests(Map<String, LambdaExpression> terms) {
+        try {
+            assert Evaluate(Tokeniser.Tokenise("and true true"), false, terms).OutputString().equals(
+                   Evaluate(Tokeniser.Tokenise("true"), false, terms).OutputString());
+            assert Evaluate(Tokeniser.Tokenise("and true false"), false, terms).OutputString().equals(
+                   Evaluate(Tokeniser.Tokenise("false"), false, terms).OutputString());
+            assert Evaluate(Tokeniser.Tokenise("or true false"), false, terms).OutputString().equals(
+                   Evaluate(Tokeniser.Tokenise("true"), false, terms).OutputString());
+            assert Evaluate(Tokeniser.Tokenise("or false false"), false, terms).OutputString().equals(
+                   Evaluate(Tokeniser.Tokenise("false"), false, terms).OutputString());
+            assert Evaluate(Tokeniser.Tokenise("not true"), false, terms).OutputString().equals(
+                    Evaluate(Tokeniser.Tokenise("false"), false, terms).OutputString());
+            assert Evaluate(Tokeniser.Tokenise("not false"), false, terms).OutputString().equals(
+                    Evaluate(Tokeniser.Tokenise("true"), false, terms).OutputString());
+
+            assert Evaluate(Tokeniser.Tokenise("add two three"), false, terms).OutputString().equals(
+                    Evaluate(Tokeniser.Tokenise("five"), false, terms).OutputString());
+            Console.println("PASSED ALL TESTS!");
+        } catch (ParseException e) {
+            assert true == false;
         }
     }
 }
