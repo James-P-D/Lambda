@@ -46,7 +46,7 @@ public class Main {
         // Load any script files passed as arguments to application
         parseArguments(args, terms);
 
-        runTests(terms);
+        //runTests(terms);
         
         String input = "";
         do {            
@@ -138,7 +138,8 @@ public class Main {
                             Console.println();
                         } else {                            
                             LambdaExpression expression = Evaluate(tokens, debugMode, terms);
-                            String alphaEquivalentTerm = AlphaEquivalentTerm(expression.OutputString(), terms);
+                            LambdaExpression expressionNewIDs = Parser.StartParseExpression(Tokeniser.Tokenise(expression.OutputTempIDString()), true, terms);
+                            String alphaEquivalentTerm = AlphaEquivalentTerm(expressionNewIDs.OutputTempIDString(), terms);
                             if (alphaEquivalentTerm == null) {
                                 Console.print(Constants.BETA + Constants.PROMPT, Constants.PROMPT_COLOR);
                                 formattedOutput(expression.OutputString());
@@ -158,7 +159,6 @@ public class Main {
     
     private static LambdaExpression Evaluate(String[] tokens, boolean debugMode, Map<String, LambdaExpression> terms) throws ParseException {
         LambdaExpression expression = Parser.StartParseExpression(tokens, true, terms);
-        
         if (debugMode) {
             Console.print(Constants.BETA + Constants.PROMPT, Constants.PROMPT_COLOR);
             formattedOutput(expression.OutputString());
@@ -175,7 +175,6 @@ public class Main {
                 formattedOutput(expression.OutputString());
                 Console.println();
             }
-            
             //expression = Parser.StartParseExpression(Tokeniser.Tokenise(expression.OutputString()), true, terms);
         } while (updated.value);
         
@@ -352,7 +351,7 @@ public class Main {
         String[] tokens = Tokeniser.Tokenise(input);
         for (int i = 0; i < tokens.length; i++) {
             String currentToken = tokens[i];
-            if (i>0) {
+            if (i > 0) {
                 String prevToken = tokens[i - 1];
                 if (Parser.isValidIdentifierName(prevToken) && Parser.isValidIdentifierName(currentToken)) {
                     Console.print(" ");
@@ -363,24 +362,37 @@ public class Main {
         }
     }
     
+    private static void test(String testStr, String resultStr, Map<String, LambdaExpression> terms) throws ParseException {
+        assert Evaluate(Tokeniser.Tokenise(testStr), false, terms).OutputString().equals(
+               Evaluate(Tokeniser.Tokenise(resultStr), false, terms).OutputString());
+    }
+    
     private static void runTests(Map<String, LambdaExpression> terms) {
         try {
-            assert Evaluate(Tokeniser.Tokenise("and true true"), false, terms).OutputString().equals(
-                   Evaluate(Tokeniser.Tokenise("true"), false, terms).OutputString());
-            assert Evaluate(Tokeniser.Tokenise("and true false"), false, terms).OutputString().equals(
-                   Evaluate(Tokeniser.Tokenise("false"), false, terms).OutputString());
-            assert Evaluate(Tokeniser.Tokenise("or true false"), false, terms).OutputString().equals(
-                   Evaluate(Tokeniser.Tokenise("true"), false, terms).OutputString());
-            assert Evaluate(Tokeniser.Tokenise("or false false"), false, terms).OutputString().equals(
-                   Evaluate(Tokeniser.Tokenise("false"), false, terms).OutputString());
-            assert Evaluate(Tokeniser.Tokenise("not true"), false, terms).OutputString().equals(
-                    Evaluate(Tokeniser.Tokenise("false"), false, terms).OutputString());
-            assert Evaluate(Tokeniser.Tokenise("not false"), false, terms).OutputString().equals(
-                    Evaluate(Tokeniser.Tokenise("true"), false, terms).OutputString());
+            String[][] tests = {
+                    // Boolean Tests
+                    {"and true true",           "true"},
+                    {"and true false",          "false"},
+                    {"or true false",           "true"},
+                    {"or false false",          "false"},
+                    {"not true",                "false"},
+                    {"not false",               "true"},
+                    {"not (and true true)",     "false"},
+                    {"xor true true",           "false"},
+                    {"xor true false",          "true"},
+                     
+                    // Maths Tests
+                    {"add two three",           "five"},
+                    {"add two (add one three)", "six"},
+                    {"succ two",                "three"},
+                    {"succ (succ two)",         "four"},
+                    {"mult two two",            "four"}
+            };
 
-            assert Evaluate(Tokeniser.Tokenise("add two three"), false, terms).OutputString().equals(
-                    Evaluate(Tokeniser.Tokenise("five"), false, terms).OutputString());
-            Console.println("PASSED ALL TESTS!");
+            for(int i=0; i< tests.length; i++) {
+                Console.println("Testing: " + tests[i][0]);
+                test(tests[i][0], tests[i][1], terms);
+            }            
         } catch (ParseException e) {
             assert true == false;
         }
