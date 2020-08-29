@@ -46,7 +46,7 @@ public class Main {
         // Load any script files passed as arguments to application
         parseArguments(args, terms);
 
-        //runTests(terms);
+        runTests(terms);
         
         String input = "";
         do {            
@@ -386,7 +386,11 @@ public class Main {
                     {"add two (add one three)", "six"},
                     {"succ two",                "three"},
                     {"succ (succ two)",         "four"},
-                    {"mult two two",            "four"}
+                    {"mult two two",            "four"},
+                    
+                    // Tuple Tests
+                    {"first (pair one two)",    "one"},
+                    {"second (pair one two)",   "two"},
             };
 
             for(int i=0; i< tests.length; i++) {
