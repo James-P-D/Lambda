@@ -30,6 +30,11 @@ public class LambdaFunction extends LambdaExpression {
     }
     
     @Override
+    public String OutputTempIDString() {
+        return Character.toString(Constants.LAMBDA) + this.name.OutputTempIDString() + Character.toString(Constants.PERIOD) + this.expression.OutputTempIDString();
+    }
+    
+    @Override
     public LambdaExpression Substitute(LambdaFunction replaceThis, LambdaExpression withThis) {
         if (replaceThis.GetName().GetID() == this.GetName().GetID()) {
             return expression.Substitute(replaceThis, withThis);

@@ -36,6 +36,15 @@ public class LambdaApplication extends LambdaExpression {
                ((secondExpression instanceof LambdaName) ? secondExpression.OutputIDString()
                                                          : (Constants.OPEN_PARENTHESES + secondExpression.OutputIDString() + Constants.CLOSE_PARENTHESES));
     }
+        
+    @Override
+    public String OutputTempIDString() {
+        return ((firstExpression instanceof LambdaName) ? firstExpression.OutputTempIDString()
+                                                        : (Constants.OPEN_PARENTHESES + firstExpression.OutputTempIDString() + Constants.CLOSE_PARENTHESES)) +
+               Constants.SPACE +
+               ((secondExpression instanceof LambdaName) ? secondExpression.OutputTempIDString()
+                                                         : (Constants.OPEN_PARENTHESES + secondExpression.OutputTempIDString() + Constants.CLOSE_PARENTHESES));
+    }
     
     @Override
     public LambdaExpression Substitute(LambdaFunction replaceThis, LambdaExpression withThis) {

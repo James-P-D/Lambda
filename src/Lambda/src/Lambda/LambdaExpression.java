@@ -8,6 +8,8 @@ abstract class LambdaExpression {
 
     public abstract String OutputIDString();
 
+    public abstract String OutputTempIDString();
+
     public abstract LambdaExpression Substitute(LambdaFunction replaceThis, LambdaExpression withThis);
     
     public abstract LambdaExpression DeepClone();

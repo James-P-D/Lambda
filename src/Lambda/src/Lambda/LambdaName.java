@@ -30,6 +30,11 @@ public class LambdaName extends LambdaExpression {
     }
     
     @Override
+    public String OutputTempIDString() {
+        return this.name + Integer.toString(this.id);
+    }
+    
+    @Override
     public LambdaExpression Substitute(LambdaFunction replaceThis, LambdaExpression withThis) {
         if(replaceThis.GetName().GetID() == this.id) {
             return withThis.DeepClone();
